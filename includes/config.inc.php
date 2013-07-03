@@ -14,6 +14,8 @@
  *
  */
 
+ini_set('display_errors', 0);
+
 /* 
  * Define base path 
  */
@@ -38,7 +40,7 @@ define('WEB_ROOT', BASE_PATH . '/htdocs');
 /*
  * The file in the /includes/ directory that contains functions custom to this installation.
  */
-define('CUSTOM_FUNCTIONS', 'class.State-sample.inc.php');
+define('CUSTOM_FUNCTIONS', 'class.Baltimore.inc.php');
 
 /*
  * Which template to use.
@@ -48,17 +50,17 @@ define('TEMPLATE', 'default');
 /*
  * What is the title of the website?
  */
-define('SITE_TITLE', 'The State Decoded');
+define('SITE_TITLE', 'Baltimore Decoded');
 
 /*
  * What is the name of the place that these laws govern?
  */
-define('PLACE_NAME', 'State');
+define('PLACE_NAME', 'City');
 
 /*
  * What does this state call its laws?
  */
-define('LAWS_NAME', 'Code of State');
+define('LAWS_NAME', 'Code of Public Laws');
 
 /*
  * What is the prefix that indicates a section? In many states, this is §, but in others it might be
@@ -77,7 +79,7 @@ define('EDITION_YEAR', 2012);
  * Does this state's code include laws that have been repealed formally, and that are marked as
  * such?
  */
-define('INCLUDES_REPEALED', TRUE);
+define('INCLUDES_REPEALED', FALSE);
 
 /*
  * The DSN to connect to MySQL.
@@ -100,7 +102,7 @@ define('GLOBAL_DEFINITIONS', '');
  * Create a list of the hiearchy of the code, from the top container to the name of an individual
  * law.
  */
-define('STRUCTURE', 'title,chapter,section');
+define('STRUCTURE', 'article,subtitle,section');
 
 /*
  * Define the regular expression that identifies section references. It is best to do so without
