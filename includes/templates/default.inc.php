@@ -52,6 +52,7 @@
 				<ul>
 					<li><a href="/" class="ir" id="home">Home</a></li>
 					<li><a href="/about/" class="ir" id="about">About</a></li>
+					<li><a href="http://baltimorecharter.org" target="_blank">City Charter</a></li>
 				</ul>
 			</nav> <!-- // #main_navigation -->
 		</header> <!-- // #masthead -->
