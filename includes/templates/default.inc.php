@@ -45,7 +45,7 @@
 		</div>
 		<header id="masthead">
 			<hgroup>
-				<h1><a href="/">The State Decoded</a></h1>
+				<h1><a href="/">Baltimore Decoded</a></h1>
 			</hgroup>
 			<nav id="main_navigation">
 				<ul class="full-nav">
