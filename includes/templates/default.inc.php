@@ -56,7 +56,7 @@
 				</ul>
 			</nav> <!-- // #main_navigation -->
 		</header> <!-- // #masthead -->
-
+		<div id="contactable" class="screen-only"></div>
 		<section id="page">
 			<nav id="breadcrumbs">
 				{{breadcrumbs}}
@@ -85,5 +85,10 @@
 		{{javascript}}
 	</script>
 	<script src="/js/jquery.qtip.min.js"></script>
+	<script src="/js/jquery.color-2.1.1.min.js"></script>
+	<script src="/contactable.1.3/jquery.validate.pack.js"></script>
+	<script src="/contactable.1.3/jquery.contactable.min.js"></script>
+	<script src="/contactable.1.3/jquery.contactable.js"></script>
+	<script src="/js/master.js"></script>
 </body>
 </html>
