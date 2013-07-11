@@ -48,12 +48,10 @@
 				<h1><a href="/">The State Decoded</a></h1>
 			</hgroup>
 			<nav id="main_navigation">
-				<div id="search">
-				</div> <!-- // #search -->
-				<ul>
-					<li><a href="/" class="ir" id="home">Home</a></li>
-					<li><a href="/about/" class="ir" id="about">About</a></li>
-					<li><a href="http://baltimorecharter.org" target="_blank">City Charter</a></li>
+				<ul class="full-nav">
+					<li><a href="/" class="nav-item" id="home">Home</a></li>
+					<li><a href="/about/" class="nav-item" id="about">About</a></li>
+					<li><a href="http://baltimorecharter.org" target="_blank" class="nav-item">City Charter</a></li>
 				</ul>
 			</nav> <!-- // #main_navigation -->
 		</header> <!-- // #masthead -->
