@@ -16,7 +16,7 @@
 	$.fn.contactable = function(options) {
 		//set default options  
 		var defaults = {
-			url: 'http://baltimorecharter.org/contactable.1.3/mail.php',
+			url: 'http://baltimorecode.org/contactable.1.3/mail.php',
 			name: 'Name',
 			email: 'Email',
 			message : 'Message',
