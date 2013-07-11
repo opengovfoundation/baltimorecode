@@ -14,6 +14,7 @@
 	<link rel="stylesheet" href="/css/master.css" type="text/css" media="screen">
 	<link rel="stylesheet" href="/css/print.css" type="text/css" media="print">
 	<link rel="stylesheet" href="/css/jquery.qtip.css" type="text/css" media="screen">
+	<link rel="stylesheet" href="/contactable.1.3/contactable.css" type="text/css" media="screen"/>
 	<link rel="home" title="Home" href="/" />
 	{{link_rel}}
 	{{css}}
