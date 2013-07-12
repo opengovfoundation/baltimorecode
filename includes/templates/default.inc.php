@@ -54,7 +54,7 @@
 					<li><a href="http://baltimorecharter.org" target="_blank" class="nav-item">City Charter</a></li>
 					<li class="search">
 						<form id="search-form" action="/search/">
-							<input type="search" size="20" id="search-input" name="q" placeholder="Search Maryland Code"/>
+							<input type="search" size="20" id="search-input" name="q" placeholder="Search Baltimore Code"/>
 							<input type="submit" value="Search"/>
 						</form>
 					</li>
