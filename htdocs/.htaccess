@@ -6,6 +6,12 @@ RewriteBase /
 
 ### SAMPLE REWRITERULES ###
 
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
+
+#Searches
+RewriteRule ^term/(.*)/?$ /search.php/?q=$1 [QSA]
+
 # Requests for a specific law.
 RewriteRule ^([0-9A-Za-z\.]{1,4})-([0-9\.:]{1,10})/$ /law.php?section_number=$1-$2 [QSA]
 
