@@ -622,7 +622,6 @@ class Structure
 	 */
 	function identifier_to_id()
 	{
-
 		/*
 		 * We're going to need access to the database connection throughout this class.
 		 */
@@ -637,12 +636,30 @@ class Structure
 			return FALSE;
 		}
 		
+		if(false !== strpos($this->identifier, '/')){
+			$identifiers = explode('/', $this->identifier);
+			$article = $db->quote($identifiers[0]);
+			$subtitle = $db->quote($identifiers[1]);
+		}else{//This doesn't fit the breadcrumb pattern
+			error_log("!ERROR! Unknown structure for identifier $this->identifier\n");
+			return FALSE;
+		}
+		
 		/*
 		 * Assemble the SQL query.
 		 */
-		$sql = 'SELECT id
+		$sql = "SELECT id
 				FROM structure
-				WHERE identifier = ' . $db->quote($this->identifier);
+				WHERE 
+				identifier = $subtitle AND
+				label = 'Subtitle' AND
+				parent_id = (
+					SELECT id
+					FROM structure
+					WHERE 
+					label = 'Article' AND
+					identifier = $article
+				)";
 		
 		$result = $db->query($sql);
 		
@@ -725,10 +742,11 @@ class Structure
 		
 			/*
 			 * Figure out the URL and include that.
-			 */
+			 */	
+					
 			$section->url = 'http://'.$_SERVER['SERVER_NAME']
 				. ( ($_SERVER['SERVER_PORT'] == 80) ? '' : ':' . $_SERVER['SERVER_PORT'] )
-				. '/'.$section->section_number.'/';
+				. $this->path . $section->section_number.'/';
 			
 			/*
 			 * Ditto for the API URL.
