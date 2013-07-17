@@ -51,7 +51,7 @@
 				<ul class="full-nav">
 					<li><a href="/" class="nav-item" id="home">Home</a></li>
 					<li><a href="/about/" class="nav-item" id="about">About</a></li>
-					<li><a href="http://baltimorecharter.org" target="_blank" class="nav-item">City Charter</a></li>
+					<li><a href="http://charter.baltimorecode.org" target="_blank" class="nav-item">City Charter</a></li>
 					<li class="search">
 						<form id="search-form" action="/search/">
 							<input type="search" size="20" id="search-input" name="q" placeholder="Search Baltimore Code"/>
