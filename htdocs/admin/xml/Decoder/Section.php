@@ -61,8 +61,12 @@
 			
 			//Add section information
 			$catch_line = $law->addChild('catch_line', $this->catch_line);
-			$order_by = $law->addChild('order_by', $this->identifier);
 			$section_number = $law->addChild('section_number', $this->identifier);
+			
+			//Split identifier and pop last element
+			$identifier_parts = explode('-', $this->identifier);
+			$order_by_value = array_pop($identifier_parts);
+			$order_by = $law->addChild('order_by', $order_by_value);
 			
 			//Add section content
 			$text = $law->addChild('text', $this->content);
