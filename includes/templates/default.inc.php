@@ -103,5 +103,6 @@
 	<script src="/contactable.1.3/jquery.contactable.min.js"></script>
 	<script src="/contactable.1.3/jquery.contactable.js"></script>
 	<script src="/js/master.js"></script>
+	<script src="/js/ga.js"></script>
 </body>
 </html>
