@@ -175,7 +175,20 @@ $body .= '</article>';
 /*
  * Establish the $sidebar variable, so that we can append to it in conditionals.
  */
-$sidebar = '';
+$sidebar = '
+<section id="share-law">
+	<h1>Share This Law</h1>
+	<!-- AddThis Button BEGIN -->
+	<div class="addthis_toolbox addthis_default_style ">
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	<a class="addthis_button_tweet"></a>
+	<a class="addthis_button_pinterest_pinit"></a>
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+	<script type="text/javascript">var addthis_config = {"data_track_addressbar":false};</script>
+	<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-518a87af289b1ef3"></script>
+	<!-- AddThis Button END -->
+</section>';
 
 /*
  * Only show the history if the law hasn't been repealed. (If it has been, then the history text
