@@ -674,6 +674,73 @@ class Law
 	}
 	
 	/**
+	 * 	Returns relative breadcrumb url to this law
+	 * 
+	 * 	TODO: This needs to be reduced to one database call
+	 */
+	function get_url(){
+		if(!isset($this->law_id)){
+			return FALSE;
+		}
+		
+		global $db;
+		
+		/*
+		 * 	Query the database for the law information
+		 */
+		$sql = 'select structure_id, section from laws where id = ' . $db->quote($this->law_id);
+		
+		$result = $db->query($sql);
+		
+		if($result === FALSE || $result->rowCount() < 1){
+			return FALSE;
+		}
+		
+		$tmp = $result->fetch(PDO::FETCH_OBJ);
+		
+		$section_identifier = $tmp->section;
+		
+		/*
+		 * 	Query the database for the subtitle structure information
+		 */
+		$sql = 'select identifier, parent_id from structure where id = ' . $tmp->structure_id;
+		
+		$result = $db->query($sql);
+		
+		if($result === FALSE || $result->rowCount() < 1){
+			return FALSE;
+		}
+		
+		$tmp = $result->fetch(PDO::FETCH_OBJ);
+		
+		$subtitle_identifier = $tmp->identifier;
+		
+		/*
+		 * 	Query the database for the article structure information
+		 */
+		$sql = 'select identifier from structure where id = ' . $tmp->parent_id;
+		
+		$result = $db->query($sql);
+		
+		if($result === FALSE || $result->rowCount() < 1){
+			return FALSE;
+		}
+		
+		$tmp = $result->fetch(PDO::FETCH_OBJ);
+		
+		$article_identifier = $tmp->identifier;
+		
+		/*
+		 * 	Create the relative url
+		 */
+		
+		$url = '/' . $article_identifier . '/' . $subtitle_identifier . '/' . $section_identifier . '/';
+		
+		//Return the url
+		return $url;
+	}
+	
+	/**
 	 * Takes the instant law object and turns it into HTML, with embedded links, anchors, etc.
 	 */
 	function render()

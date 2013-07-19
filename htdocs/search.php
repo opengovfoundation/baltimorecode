@@ -100,11 +100,15 @@
 	';
 	
 	foreach($docs as $doc){
+		$law = new Law();
+		$law->law_id = $doc->id;
+		$law_url = $law->get_url();
+		
 		$body .= '
 			<div>
 				<h2>
 					<span class="hl1">' . $query_readable . '</span>
-					<span><a href="/' . $doc->section . '/">(' . $doc->section . ')</a></span>
+					<span><a href="' . $law_url . '">(' . $doc->section . ')</a></span>
 				</h2>
 				<p>' . $doc->text . '</p>
 			</div>
