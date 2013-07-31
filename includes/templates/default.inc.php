@@ -83,6 +83,9 @@
 					<input id="stay-updated" type="button" value="Submit"/>
 					<div id="submit_response"></div>
 				</section>
+				<section>
+					<p style="margin-top:15px;">Want to open your city or state?  Click <a href="mailto:sayhello@opengovfoundation.org?Subject=Help%20Open%20My%20City%20or%20State">here!</a></p>
+				</section>
 			</section>
 		
 			{{body}}
