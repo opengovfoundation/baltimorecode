@@ -123,6 +123,24 @@ CREATE TABLE IF NOT EXISTS `structure` (
   KEY `parent_id` (`parent_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Titles, chapters, parts, articles, etc.';
 
+CREATE TABLE term_index (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `parent_id` int(10) unsigned,
+  `law_id` int(10) unsigned,
+  `term` varchar(255),
+  `article` varchar(6),
+  `section` varchar(16),
+  `see` varchar(255),
+  `see_id` int(10) unsigned,
+  `see_also` varchar(255),
+  `see_also_id` int(10) unsigned,
+  `order_by` int(10) unsigned,
+  PRIMARY KEY  (`id`),
+  KEY `parent_id` (`parent_id`),
+  KEY `law_id` (`law_id`),
+  KEY `order_by` (`order_by`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci ;
+
 CREATE TABLE IF NOT EXISTS `text` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `law_id` int(10) unsigned NOT NULL,
