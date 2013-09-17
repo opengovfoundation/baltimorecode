@@ -2,7 +2,7 @@
 
 /**
  * The administrative parser page
- * 
+ *
  * PHP version 5
  *
  * @author		Waldo Jaquith <waldo at jaquith.org>
@@ -67,7 +67,12 @@ if (count($_POST) === 0)
 		<form method="post" action="/admin/parser.php">
 			<input type="hidden" name="action" value="empty" />
 			<input type="submit" value="Empty the DB" />
-		</form>';
+		</form>
+		<form method="post" action="/admin/parser.php">
+			<input type="hidden" name="action" value="parse_term_index" />
+			<input type="submit" value="Parse Terms Index" />
+		</form>
+		';
 }
 
 /*
@@ -77,12 +82,12 @@ elseif ($_POST['action'] == 'empty')
 {
 
 	ob_start();
-	
+
 	$parser->clear_db();
-	
+
 	$body = ob_get_contents();
 	ob_end_clean();
-	
+
 }
 
 /*
@@ -92,7 +97,7 @@ elseif ($_POST['action'] == 'parse')
 {
 
 	ob_start();
-	
+
 	/*
 	 * Step through each parser method.
 	 */
@@ -102,15 +107,27 @@ elseif ($_POST['action'] == 'parse')
 	$parser->structural_stats_generate();
 	$parser->clear_apc();
 	$parser->prune_views();
-	
+
 	/*
 	 * Attempt to purge Varnish's cache. (Fails silently if Varnish isn't installed or running.)
 	 */
 	$varnish = new Varnish;
 	$varnish->purge();
-	
+
 	$body = ob_get_contents();
 	ob_end_clean();
+}
+elseif ($_POST['action'] == 'parse_term_index')
+{
+//	require_once INCLUDE_PATH . '/parser-controller.inc.php';
+
+	$parser = new TermIndexParserController(
+		array(
+			'directory' => dirname(__FILE__).'/terms/'
+		)
+	);
+
+	$parser->parse();
 }
 
 

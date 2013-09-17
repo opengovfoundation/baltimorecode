@@ -31,12 +31,28 @@ $filter_args = array(
 
 $query = filter_input_array(INPUT_GET, $filter_args);
 
+if(!isset($query['page']))
+{
+	$query['page'] = 1;
+}
+
+/*
+ * Let's just override the per_page to avoid abuse.
+ */
+$query['per_page'] = 50;
+
+
 /*
  * Create a new instance of Term.
  */
 $term = new Term();
 
 $terms = $term->get_terms_nested($query);
+
+$count_terms = $term->get_total_count($query);
+
+$last_page = ceil($count_terms / $query['per_page']);
+
 
 /*
  * Fire up our templating engine.
@@ -58,7 +74,7 @@ $template->field->javascript_files = '
 /*
  * Define the browser title.
  */
-$template->field->browser_title ='Term Index—' . SITE_TITLE;
+$template->field->browser_title ='Term Index - ' . SITE_TITLE;
 
 /*
  * Define the page title.
@@ -81,6 +97,23 @@ foreach($terms as $current_term)
 }
 
 $body .= '</article>';
+
+if($last_page > 1)
+{
+	$body .= '<nav class="pagination"><ul>';
+
+	if($query['page'] > 1)
+	{
+		$body .= '<li><a href="?page=1">First Page</a></li>';
+		$body .= '<li><a href="?page=' . ($query['page'] - 1) . '">Previous Page</a></li>';
+	}
+	if($query['page'] < $last_page)
+	{
+		$body .= '<li><a href="?page=' . ($query['page'] + 1) . '">Next Page</a></li>';
+		$body .= '<li><a href="?page=' . $last_page . '">Last Page</a></li>';
+	}
+	$body .= '</ul></nav>';
+}
 
 /*
  * Establish the $sidebar variable, so that we can append to it in conditionals.
@@ -176,8 +209,20 @@ function show_term($term)
 		{
 			// TODO: replace this with data from the permalinks table when it becomes
 			// available.
+			$ancestors = array();
+			foreach($term as $field=>$value)
+			{
+				// If we have a structure field
+				if (preg_match('/^s[0-9]_identifier/', $field))
+				{
+					$ancestors[] = $value;
+				}
+			}
+			$url = '/' . join('/', array_reverse($ancestors)) . '/' .
+				$term['laws_section'] . '/';
+
 			$text .= '<span class="law-lookup">
-				<a href="/'.$term['laws_section'].'/">' .
+				<a href="'.$url.'">' .
 				$term['laws_section'] . '</a></span>';
 		}
 		else
