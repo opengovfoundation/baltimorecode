@@ -100,17 +100,27 @@ $body .= '</article>';
 
 if($last_page > 1)
 {
+	$url_args = $query;
+
+
+
 	$body .= '<nav class="pagination"><ul>';
 
 	if($query['page'] > 1)
 	{
-		$body .= '<li><a href="?page=1">First Page</a></li>';
-		$body .= '<li><a href="?page=' . ($query['page'] - 1) . '">Previous Page</a></li>';
+		$url_args['page'] = 1;
+		$body .= '<li><a href="?' . http_build_query($url_args) . '">First Page</a></li>';
+
+		$url_args['page'] = (int) $query['page'] - 1;
+		$body .= '<li><a href="?' . http_build_query($url_args) . '">Previous Page</a></li>';
 	}
 	if($query['page'] < $last_page)
 	{
-		$body .= '<li><a href="?page=' . ($query['page'] + 1) . '">Next Page</a></li>';
-		$body .= '<li><a href="?page=' . $last_page . '">Last Page</a></li>';
+		$url_args['page'] = (int) $query['page'] + 1;
+		$body .= '<li><a href="?' . http_build_query($url_args) . '">Next Page</a></li>';
+
+		$url_args['page'] = $last_page;
+		$body .= '<li><a href="?' . http_build_query($url_args) . '">Last Page</a></li>';
 	}
 	$body .= '</ul></nav>';
 }
