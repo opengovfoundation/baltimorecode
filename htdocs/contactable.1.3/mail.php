@@ -1,21 +1,23 @@
 <?php
+	require_once('../../includes/page-head.inc.php');
+
 	//Use SendGrid for mailing
 	require_once("sendgrid-php/SendGrid_loader.php");
 
-	function email($em, $subject, $message = '') 
+	function email($em, $subject, $message = '')
 	{
 
 		try{
-			$sendgrid = new SendGrid('', '');
+			$sendgrid = new SendGrid(SENDGRID_USERNAME, SENDGRID_PASSWORD);
 
 			$mail = new SendGrid\Mail();
 			$mail->addTo($em)
-				->setFrom('sayhello@opengovfoundation.org')
+				->setFrom(EMAIL_ADDRESS)
 				->setSubject($subject)
 				->setText($message);
 
-			$sendgrid->smtp->send($mail);
-		}	
+			$result = $sendgrid->smtp->send($mail);
+		}
 		catch(Exception $e){
 			error_log($e);
 			return false;
@@ -24,27 +26,38 @@
 		return true;
 	}
 
-	//declare our assets 
+	//declare our assets
 	$name = stripcslashes($_POST['name']);
 	$emailAddr = stripcslashes($_POST['email']);
 	$comment = stripcslashes($_POST['message']);
-	$subject = stripcslashes($_POST['subject']);	
-	$contactMessage =  
+	$subject = stripcslashes($_POST['subject']);
+	$contactMessage =
 		"Message:
-		$comment 
+		$comment
 
 		Name: $name
 		E-mail: $emailAddr
 
 		Sending IP:$_SERVER[REMOTE_ADDR]
 		Sending Script: $_SERVER[HTTP_HOST]$_SERVER[PHP_SELF]";
-		
-		
-		
-		//send the email 
-		email('sayhello@opengovfoundation.org', $subject, $contactMessage);
-		echo('success'); //return success callback
-		
-		
-		
+
+
+
+	//send the email
+	$result = email(CONTACT_EMAIL, $subject, $contactMessage);
+
+	if($result)
+	{
+		$response = 'success';
+	}
+	else
+	{
+		$response = 'failure';
+	}
+
+	print $response;
+
+
+
+
 ?>

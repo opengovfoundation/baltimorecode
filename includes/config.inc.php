@@ -2,7 +2,7 @@
 
 /**
  * The configuration file that drives The State Decoded.
- * 
+ *
  * PHP version 5
  *
  * @author		Waldo Jaquith <waldo at jaquith.org>
@@ -16,8 +16,8 @@
 
 ini_set('display_errors', 0);
 
-/* 
- * Define base path 
+/*
+ * Define base path
  */
 
 define('BASE_PATH', dirname(dirname(__FILE__)));
@@ -133,6 +133,8 @@ define('SECTION_PCRE_STRUCTURE','title,title,section,section');
 define('EMAIL_ADDRESS', '');
 define('EMAIL_NAME', SITE_TITLE);
 
+define('CONTACT_EMAIL', EMAIL_ADDRESS);
+
 
 /**
  * API Keys
@@ -142,16 +144,22 @@ define('EMAIL_NAME', SITE_TITLE);
  * The site uses its own API extensively. Provide the API key here. (This is populated automatically
  * at the time that the parser is run.)
  */
-define('API_KEY', '');
+define('API_KEY', 'r157TFdUgt4GLWz7');
 
 /*
  * If you want to enable Disqus <http://www.disqus.com/> commenting for every law, register for
  * Disqus, create a new site, and enter the assigned Disqus shortname here.
  */
-// define('DISQUS_SHORTNAME', '');
+define('DISQUS_SHORTNAME', 'baltimorecode');
 
 /*
  * If you're running a Varnish server, and you want The State Decoded to automatically purge expired
  * content, provide the URL (including the port number) here.
  */
 // define('VARNISH_HOST', 'http://127.0.0.1:80/');
+
+/*
+ * Username and Password for SendGrid mailing
+ */
+define('SENDGRID_USERNAME', '');
+define('SENDGRID_PASSWORD', '');
