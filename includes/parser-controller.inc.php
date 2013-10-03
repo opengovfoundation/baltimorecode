@@ -119,7 +119,7 @@ class ParserController
 				WHERE meta_key = "history" OR meta_key = "repealed"';
 		$result = $this->db->exec($sql);
 	}
-	
+
 	public function prune_views()
 	{
 		$sql = 'DELETE FROM
@@ -211,7 +211,7 @@ class ParserController
 				 */
 				$parser->history = $law->history;
 				$history = $parser->extract_history();
-				
+
 				if ($history !== FALSE)
 				{
 
@@ -223,7 +223,7 @@ class ParserController
 							meta_key="history", meta_value=' . $this->db->quote(serialize($history)) . ',
 							date_created=now();';
 					$this->db->exec($sql);
-				
+
 				}
 			}
 
@@ -327,7 +327,7 @@ class ParserController
 			 * screen, along with instructions.
 			 */
 			$config_file = INCLUDE_PATH.'/config.inc.php';
-			
+
 			if (is_writable($config_file))
 			{
 				$config = file_get_contents($config_file);
@@ -371,12 +371,12 @@ class ParserController
 				download files could not be exported.', 10);
 			return FALSE;
 		}
-		
+
 		/*
 		 * Get a listing of all laws, to be exported in various formats.
 		 */
 		$this->logger->message('Querying laws', 3);
-		
+
 		/*
 		 * Only get section numbers. We them pass each one to the Laws class to get each law's
 		 * data.
@@ -388,12 +388,12 @@ class ParserController
 		$result = $this->db->query($sql);
 		if ($result->rowCount() > 0)
 		{
-			
+
 			/*
 			 * Establish the path of our code JSON storage directory.
 			 */
 			$json_dir = $downloads_dir . 'code-json/';
-			
+
 			/*
 			 * If the JSON directory doesn't exist, create it.
 			 */
@@ -401,7 +401,7 @@ class ParserController
 			{
 				mkdir($json_dir);
 			}
-			
+
 			/*
 			 * If we cannot write to the JSON directory, log an error.
 			 */
@@ -410,17 +410,17 @@ class ParserController
 				$this->logger->message('Cannot write to '.$json_dir.' to export files.', 10);
 				break;
 			}
-			
+
 			/*
 			 * Set a flag telling us that we may write JSON.
 			 */
 			$write_json = TRUE;
-			
+
 			/*
 			 * Establish the path of our code text storage directory.
 			 */
 			$text_dir = $downloads_dir . 'code-text/';
-			
+
 			/*
 			 * If the text directory doesn't exist, create it.
 			 */
@@ -428,7 +428,7 @@ class ParserController
 			{
 				mkdir($text_dir);
 			}
-			
+
 			/*
 			 * If we cannot write to the text directory, log an error.
 			 */
@@ -437,12 +437,12 @@ class ParserController
 				$this->logger->message('Cannot open '.$text_dir.' to export files.', 10);
 				break;
 			}
-			
+
 			/*
 			 * Set a flag telling us that we may write text.
 			 */
 			$write_text = TRUE;
-			
+
 			/*
 			 * Create a new instance of the class that handles information about individual laws.
 			 */
@@ -476,9 +476,9 @@ class ParserController
 				 * Pass the requested section number to Law.
 				 */
 				$laws->section_number = $section->number;
-				
+
 				unset($law);
-				
+
 				/*
 				 * Get a list of all of the basic information that we have about this section.
 				 */
@@ -487,9 +487,9 @@ class ParserController
 				/*
 				 * Eliminate colons from section numbers, since some OSes can't handle colons in
 				 * filenames.
-				 */		
+				 */
 				$filename = str_replace(':', '_', $law->section_number);
-				
+
 				/*
 				 * Store the JSON file.
 				 */
@@ -502,7 +502,7 @@ class ParserController
 						break;
 					}
 				}
-				
+
 				/*
 				 * Store the text file.
 				 */
@@ -515,9 +515,9 @@ class ParserController
 						break;
 					}
 				}
-				
+
 			} // end the while() law iterator
-			
+
 			/*
 			 * Zip up all of the JSON files into a single file. We do this via exec(), rather than
 			 * PHP's ZIP extension, because doing it within PHP requires far too much memory. Using
@@ -529,7 +529,7 @@ class ParserController
 				$output = array();
 				exec('cd '.$downloads_dir.'; zip -9rq code.json.zip code-json');
 			}
-			
+
 			/*
 			 * Zip up all of the text into a single file.
 			 */
@@ -539,7 +539,7 @@ class ParserController
 				$output = array();
 				exec('cd '.$downloads_dir.'; zip -9rq code.txt.zip code-text');
 			}
-			
+
 		}
 
 
@@ -556,7 +556,7 @@ class ParserController
 		$result = $this->db->query($sql);
 		if ($result->rowCount() > 0)
 		{
-		
+
 			/*
 			 * Retrieve the entire dictionary as a single object.
 			 */
@@ -584,7 +584,7 @@ class ParserController
 			{
 				$this->logger->message('Cannot open ' . $filename . ' to create a new ZIP file.', 10);
 			}
-			
+
 			else
 			{
 
@@ -597,7 +597,7 @@ class ParserController
 				 * Close out our ZIP file.
 				 */
 				$zip->close();
-				
+
 			}
 		}
 
@@ -606,7 +606,7 @@ class ParserController
 
 	public function clear_apc()
 	{
-	
+
 		/*
 		 * If APC exists on this server, clear everything in the user space. That consists of
 		 * information that the State Decoded has stored in APC, which is now suspect, as a result
@@ -621,7 +621,7 @@ class ParserController
 			$this->logger->message('Done', 5);
 		}
 	}
-	
+
 	/**
 	 * Generate statistics about structural units
 	 *
@@ -631,20 +631,20 @@ class ParserController
 	 */
 	function structural_stats_generate()
 	{
-		
+
 		$this->logger->message('Generating structural statistics', 3);
-		
+
 		/*
 		 * List all of the top-level structural units.
 		 */
 		$struct = new Structure();
 		$structures = $struct->list_children();
-		
+
 		/*
 		 * Create an object to store structural statistics.
 		 */
 		$this->stats = new stdClass();
-		
+
 		/*
 		 * Iterate through each of those units.
 		 */
@@ -654,15 +654,15 @@ class ParserController
 			$this->structure_id = $structure->id;
 			$this->structural_stats_recurse();
 		}
-		
+
 		$code_structures = explode(',', STRUCTURE);
-		
+
 		/*
 		 * Iterate through every primary structural unit.
 		 */
 		foreach ($this->stats as $structure_id => $structure)
 		{
-		
+
 			/*
 			 * If this is more than 1 level deep.
 			 */
@@ -674,34 +674,34 @@ class ParserController
 				for ($i=0; $i < (count($structure->ancestry) - 1); $i++)
 				{
 					$ancestor_id = $structure->ancestry[$i];
-					
+
 					if (!isset($this->stats->{$ancestor_id}->child_laws))
 					{
 						$this->stats->{$ancestor_id}->child_laws = 0;
 					}
-					
+
 					if (!isset($this->stats->{$ancestor_id}->child_structures))
 					{
 						$this->stats->{$ancestor_id}->child_structures = 0;
 					}
-					
+
 					if (isset($structure->child_laws))
 					{
 						$this->stats->{$ancestor_id}->child_laws = $this->stats->{$ancestor_id}->child_laws + $structure->child_laws;
 					}
-					
+
 					if (isset($structure->child_structures))
 					{
 						$this->stats->{$ancestor_id}->child_structures = $this->stats->{$ancestor_id}->child_structures + $structure->child_structures;
 					}
 				}
 			}
-		
+
 		}
-		
+
 		foreach ($this->stats as $structure_id => $structure)
 		{
-			
+
 			if (!isset($structure->child_laws))
 			{
 				$structure->child_laws = 0;
@@ -710,21 +710,36 @@ class ParserController
 			{
 				$structure->child_structures = 0;
 			}
-			
-			$metadata = new stdClass();
+
+			// Check for metadata
+			$metadata_sql = 'SELECT metadata FROM structure WHERE id = ' . $structure_id;
+			$result = $this->db->exec($metadata_sql);
+			if ($result->rowCount() > 0)
+			{
+				$row = $result->fetch(PDO::FETCH_OBJ);
+				if(isset($row->metadata) && strlen($row->metadata))
+				{
+					$metadata = unserialize($row->metadata);
+				}
+			}
+
+			if(!isset($metadata))
+			{
+				$metadata = new stdClass();
+			}
 			$metadata->child_laws = $structure->child_laws;
 			$metadata->child_structures = $structure->child_structures;
-			
+
 			$sql = 'UPDATE structure
 					SET metadata = ' . $this->db->quote(serialize($metadata)) . '
 					WHERE id = ' . $structure_id;
 			$result = $this->db->exec($sql);
-		
+
 		}
-		
+
 	} // end structural_stats_generate()
-	
-	
+
+
 	/**
 	 * Recurse through structural information
 	 *
@@ -732,7 +747,7 @@ class ParserController
 	 */
 	function structural_stats_recurse()
 	{
-		
+
 		/*
 		 * Retrieve basic stats about the children of this structural unit.
 		 */
@@ -740,7 +755,7 @@ class ParserController
 		$struct->id = $this->structure_id;
 		$child_structures = $struct->list_children();
 		$child_laws = $struct->list_laws();
-		
+
 		/*
 		 * Append the structure's ID to the structural ancestry.
 		 */
@@ -760,7 +775,7 @@ class ParserController
 		}
 		$this->stats->{$this->structure_id}->depth = $this->depth;
 		$this->stats->{$this->structure_id}->ancestry = $this->ancestry;
-		
+
 		/*
 		 * If this structural unit has child structural units of its own, recurse into those.
 		 */
@@ -773,16 +788,16 @@ class ParserController
 				$this->structure_id = $child_structure->id;
 				$this->structural_stats_recurse();
 			}
-			
+
 		}
-		
+
 		/*
 		 * Having just finished a recursion, we can remove the last member of the ancestry array
 		 * and eliminate one level of the depth tracking.
 		 */
 		$this->ancestry = array_slice($this->ancestry, 0, -1);
 		$this->depth--;
-		
+
 	} // end structural_stats_recurse()
-	
+
 }
