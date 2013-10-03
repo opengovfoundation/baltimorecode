@@ -86,6 +86,8 @@ class Parser
 	public $files = array();
 	public $db;
 
+	public $title_filename = '/titles.json';
+
 	public function __construct($options)
 	{
 		/**
@@ -315,6 +317,29 @@ class Parser
 		}
 
 		return TRUE;
+	}
+
+	/**
+	 * Do any setup.
+	 */
+	public function pre_parse()
+	{
+		// Check to see if the titles file exists
+		if(!file_exists(DATA_DIRECTORY . $this->title_filename))
+		{
+			// TODO: replace this with a logger.
+			print 'No title data to import.';
+		}
+	}
+	/**
+	 * Do any cleanup.
+	 */
+	public function post_parse()
+	{
+		/*
+		 * Reimport any previously-exported titles.
+		 */
+		$this->import_titles();
 	}
 
 
@@ -1441,5 +1466,102 @@ class Parser
 		}
 
 	} // end extract_history()
+
+	/*
+	 * We have manually entered titles, so we need a way
+	 * to import/export those.
+	 */
+
+	public function export_titles()
+	{
+		// The only unique identifier currently for a structure or law is its complete path.
+		$structure_query = 'SELECT * FROM structure_unified ';
+		// For now, we only care about top-level items.
+		$structure_query .= 'WHERE s2_id IS NULL ';
+
+		$result = $this->db->query($structure_query);
+		if ( ($result === FALSE) || ($result->rowCount() == 0) )
+		{
+			echo '<p>Query failed: '.$structure_query.'</p>';
+		}
+
+		$storage = array();
+		while($structure = $result->fetch(PDO::FETCH_OBJ))
+		{
+			$row = array();
+			foreach(get_object_vars($structure) as $key => $value)
+			{
+
+				// Store all data necessary to get to where we are
+				// String match is faster than preg_match
+				$id = '_identifier';
+				$id_length = strlen($id);
+
+
+				// Store the name.
+				if($key == 's1_name' ||
+				// And any identifiers.
+					substr($key, -1 * $id_length) === $id)
+				{
+					$row[$key] = $value;
+				}
+			}
+
+			if(count($row))
+			{
+				$storage[] = $row;
+			}
+		}
+		$this->export_data($storage, DATA_DIRECTORY . $this->title_filename);
+	}
+
+	public function import_titles()
+	{
+		$titles = $this->import_data(DATA_DIRECTORY . $this->title_filename);
+
+		foreach($titles as $title)
+		{
+
+			$update_query = 'UPDATE structure_unified SET s1_name = ' .
+				$this->db->quote($title->s1_name);
+			unset($title->s1_name);
+
+			$where = array();
+
+			// The rest is the where clause;
+			foreach(get_object_vars($title) as $key => $value)
+			{
+				if($value)
+				{
+					$where[] = $key . ' = ' .$this->db->quote($value);
+				}
+				else
+				{
+					$where[] = $key . ' IS NULL ';
+				}
+			}
+			$update_query .= ' WHERE ' . join(' AND ', $where);
+
+			$result = $this->db->query($update_query);
+			if ( ($result === FALSE) )
+			{
+				echo '<p>Query failed: '.$structure_query.'</p>';
+			}
+		}
+
+	}
+
+	public function export_data($data, $filename)
+	{
+		// We abstract this so we can change our storage medium later.
+		file_put_contents($filename, json_encode($data));
+	}
+
+	public function import_data($filename)
+	{
+		// We abstract this so we can change our storage medium later.
+		return json_decode(file_get_contents($filename));
+	}
+
 
 } // end Parser class

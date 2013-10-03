@@ -38,6 +38,11 @@ set_include_path(get_include_path().PATH_SEPARATOR.INCLUDE_PATH);
 define('WEB_ROOT', BASE_PATH . '/htdocs');
 
 /*
+ * Define the data dir.
+ */
+define('DATA_DIRECTORY', WEB_ROOT . '/admin/data/');
+
+/*
  * The file in the /includes/ directory that contains functions custom to this installation.
  */
 define('CUSTOM_FUNCTIONS', 'class.Baltimore.inc.php');
@@ -72,8 +77,8 @@ define('SECTION_SYMBOL', '§');
  * Establish which version of the code that's in effect sitewide. The ID is the database ID in the
  * "editions" table.
  */
-define('EDITION_ID', 1);
-define('EDITION_YEAR', 2012);
+define('EDITION_ID', 2);
+define('EDITION_YEAR', 2013);
 
 /*
  * Does this state's code include laws that have been repealed formally, and that are marked as
