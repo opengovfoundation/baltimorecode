@@ -4,9 +4,6 @@ function validateEmail(email) {
 }
 
 $(document).ready(function(){
-	$('#contactable').contactable({
-		subject: 'Feedback Message'
-	});
 	
 	$('#stay-updated').click(function(){
 		var email = $('#signup-email').val();
