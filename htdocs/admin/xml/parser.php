@@ -85,7 +85,7 @@
 					$subtitle_content = $content;
 
 					//Split the subtitle content on the Section identifiers
-					$sections = preg_split('@\n\s*\n&#167;@', $subtitle_content);
+					$sections = preg_split('@\n\s*\n(&#167;)+@', $subtitle_content);
 					if($article_index == '01'){
 						customLog($sections);
 					}

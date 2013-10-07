@@ -65,6 +65,10 @@ if (count($_POST) === 0)
 			<input type="submit" value="Parse" />
 		</form>
 		<form method="post" action="/admin/parser.php">
+			<input type="hidden" name="action" value="export_titles" />
+			<input type="submit" value="Export Titles" />
+		</form>
+		<form method="post" action="/admin/parser.php">
 			<input type="hidden" name="action" value="empty" />
 			<input type="submit" value="Empty the DB" />
 		</form>
@@ -117,10 +121,15 @@ elseif ($_POST['action'] == 'parse')
 	$body = ob_get_contents();
 	ob_end_clean();
 }
-elseif ($_POST['action'] == 'parse_term_index')
+elseif ($_POST['action'] == 'export_titles')
 {
 //	require_once INCLUDE_PATH . '/parser-controller.inc.php';
 
+	$parser->export_titles();
+	$body = 'Done';
+}
+elseif ($_POST['action'] == 'parse_term_index')
+{
 	$parser = new TermIndexParserController(
 		array(
 			'directory' => dirname(__FILE__).'/terms/'

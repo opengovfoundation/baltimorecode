@@ -55,6 +55,8 @@ after "deploy:finalize_update" do
   run "ln -nfs #{shared_path}/includes/config.inc.php #{release_path}/includes/config.inc.php"
   run "ln -nfs #{shared_path}/data #{release_path}/htdocs/admin/xml"
   run "ln -nfs #{shared_path}/downloads #{release_path}/htdocs/downloads"
+  # This will be problematic later, until we disambiguate the data dirs.
+  run "mkdir #{release_path}/data"
 end
 
 # Setup the shared folders.  Since we don't symlink these directly,

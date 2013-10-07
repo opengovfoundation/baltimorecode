@@ -20,7 +20,7 @@
 <para>of</para>
 <para>Baltimore City</para>
 <para>      </para>
-<para>(As Enacted by Ord. 13-093)</para>
+<para>(As Last Amended by Ord. 13-167)</para>
 <para></para>
 <para></para>
 <para></para>
@@ -3189,7 +3189,11 @@ Department or from the Bureau of Liens, is $30, in addition to the charge for a 
 <para>2.<emphasis role="bold"></emphasis> All others</para>
 <para></para>
 <para>   $20 for each 1,000 cubic feet (28.31 cu. m.) or fraction of 1,000 cubic feet </para>
-<para>     (28.31 cu. m.) of gross volume, including all basements and cellars.</para>
+<para>     (28.31 cu. m.) of adjusted gross volume, including all basements and cellars.</para>
+<para>For this calculation, the gross volume of the building is adjusted to exclude,
+for each story of the building, the volume attributable to any area of that story
+that is more than 20 feet (6.10 m) above the floor.</para>
+<para><emphasis role="italic"> (Ord. 13</emphasis>-167.)</para>
 <para></para>
 <para>    Minimums &#8211; </para>
 <para>     New building$250</para>
@@ -3266,7 +3270,6 @@ fraction of $1,000 estimated cost, subject to a minimum fee of $50 &#8211; </par
 <para>   0 to 5,000 cu. yd. (3822.77 cu. m.)$35</para>
 <para>   Over 5,000 cu. yd. (3822.77 cu. m.) to 50,000 cu. yd. (38,227.74 cu. m.)$50</para>
 <para>   Over 50,000 cu. yd. (38,227.74 cu. m.)$75</para>
-<para></para>
 <para><emphasis role="bold">  i.</emphasis>Paving or surfacing.</para>
 <para></para>
 <para>   0 to 1,000 sq. ft. (92.90 sq. m.)$25</para>
