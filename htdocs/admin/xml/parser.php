@@ -54,20 +54,20 @@
 			$subtitles = preg_split("@^(Subtitle\s1\s*)$@m", $text);
 
 			if(!isset($subtitles[2])){
-				throw new Exception("Couldn't get body of text for article: $article_index");
+				throw new Exception("Couldn't get body of text for $filename in article: $article_index");
 			}
 
 			//Drop the table of contents
 			$subtitles = $subtitles[2];
 
 			//Split the remaining content into Subtitles
-			$subtitles = preg_split('@^(Subtitles?\s\d+\s?[to]*\s?\d*)\s*$@m', $subtitles, -1, PREG_SPLIT_DELIM_CAPTURE);
+			$subtitles = preg_split('@^(Subtitles?\s[0-9A]+\s?[to]*\s?[0-9A]*)\s*$@m', $subtitles, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 			//Loop through the subtitles
 			foreach($subtitles as $index => $content){
 
 				if($index % 2 != 0){//Odd indexes are the subtitle labels
-					$ret = preg_match_all('@Subtitles?\s(\d+)\s?[to]*\s?(\d*)@', $content, $matches);
+					$ret = preg_match_all('@Subtitles?\s([0-9A]+)\s?[to]*\s?([0-9A]*)@', $content, $matches);
 
 					if($ret === 0 || $ret === false){
 						throw new Exception("Subtitle index not found.\n Index: $index\nContent: $content\n");
@@ -95,23 +95,56 @@
 						//Create the section object
 						$tempSection = new Decoder\Section();
 
+
+
 						//If the index is zero, we have the Subtitle name
 						if($index == 0){
-							$subtitle_title = $section;
-							continue;
+							//Part 1 almost always comes right after the section title.
+							if(preg_match("/\n(Part\.? [0-9]+\.)  /", $section, $matches))
+							{
+								list($subtitle_title, $part) = preg_split("/\nPart\.? [0-9]+\.  /", $section);
+
+								list($part, $section) = preg_split("/\n+/", $part, 2);
+
+								// TODO: We need to handle parts here.
+								// Note: Parts have Editor's notes!!!
+
+								if(!$section)
+								{
+									continue;
+								}
+
+							}
+							else{
+								$subtitle_title = $section;
+								continue;
+							}
+
+						}
+
+						// Parts may appear at the bottom.
+						list($section, $part) = preg_split("/\n\nPart\.? [0-9]+\.  /", $section);
+						if($part)
+						{
+							// TODO: We need to handle parts here.
+							// Note: Parts have Editor's notes!!!
 						}
 
 						//Split the first line (Section top-level information)
 						$lines = preg_split('/\r\n|\r|\n/', $section, 2);
 
 						//grab the section catch title
-						$catch_line = preg_replace('@(\d+[A-Z]?-\d+\s?[to]*\s?\d*-?\d*)\.?@', '', $lines[0]);
+						$catch_line = preg_replace('@(\d+[A-Z]?-\d+\s?[to]*\s?\d*[A-Z]?-?\d*)\.?@', '', $lines[0]);
 
 						//grab the section number
-						$ret = preg_match('@(\d+[A-Z]?-?\d*\s?[to]*\s?\d*-?\d*)\.?@', $lines[0], $identifier);
+						$ret = preg_match('@(\d+[A-Z]?-?\d*\s?[to]*\s?\d*[A-Z]?-?\d*)\.?@', $lines[0], $identifier);
 
 						if($ret === 0 || $ret === false){
-							throw new Exception("Error getting section number for line: " . print_r($lines[0], true) . "\n****\n Subtitle: $subtitle_content");
+							var_dump($subtitle_title, $matches, $section);
+							throw new Exception("Error getting section number in $filename " .
+								"for line: " . print_r($lines[0], true) . "\n" .
+								"****\n" .
+								"Subtitle: $subtitle_content");
 						}
 
 						//throw an error if we can't grab the section number
