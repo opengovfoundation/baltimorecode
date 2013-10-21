@@ -2,7 +2,7 @@
 
 /**
  * The "About" page, explaining this State Decoded website.
- * 
+ *
  * PHP version 5
  *
  * @author		Waldo Jaquith <waldo at jaquith.org>
@@ -26,13 +26,13 @@ $template->field->page_title = 'About';
 
 $body = '
 <h2>Introduction</h2>
-<p>Baltimore Decoded is a non-profit, non-governmental, non-partisan implementation of <a href="http://www.statedecoded.com/" target="_blank">The State Decoded</a> brought to you by the folks at the <a href="http://opengovfoundation.org/" target="_blank">OpenGov Foundation</a>. It’s a collaborative software project that costs Baltimore citizens $0 tax dollars, and that provides a platform to display city-level legal information in a friendly, accessible, modern fashion. Baltimore City is the first municipality to deploy the software, with more coming soon</p>
+<p>Baltimore Decoded is a non-profit, non-governmental, non-partisan implementation of <a href="http://www.statedecoded.com/" target="_blank">The State Decoded</a> brought to you by the folks at the <a href="http://opengovfoundation.org/" target="_blank">OpenGov Foundation</a>. It’s a collaborative software project that costs Baltimore citizens $0 tax dollars, and that provides a platform to display city-level legal information in a friendly, accessible, modern fashion. Baltimore City is the first municipality to deploy the software, with more coming soon.</p>
 <iframe width="560" height="315" style="margin:50px auto 0 auto; width:560px; display:block;" src="//www.youtube.com/embed/Nl6xncNzavc" frameborder="0" allowfullscreen></iframe>
 <h2>Beta Testing</h2>
 <p>Baltimore Decoded is currently in public beta, which is to say that the site is under active development, with known shortcomings, but it has reached a point where it would benefit from being used by the general public (who one hopes will likewise benefit from it).  While every effort is made to ensure that the data provided on Baltimore Decoded is accurate and up-to-date, it would be gravely unwise to rely on it for any matter of importance while it is in this beta testing phase.</p>
 <p>Many more features are under development, including calculations of the importance of given laws, inclusion of attorney generals’ opinions, court rulings, extensive explanatory text, social media integration, significant navigation enhancements, a vastly expanded built-in glossary of legal terms, scholarly article citations, and much more.</p>
 <h2>Data Sources</h2>
-<p>Data Sources The information that makes up Baltimore Decoded comes entirely from public sources. All of the sections of the code are straight from the <a href="http://www.baltimorecity.gov/Government/AgenciesDepartments/LegislativeReference.aspx" target="_blank">Baltimore City Department of Legislative Reference</a>, who provided XML of the Code. Any further included legislative data is scraped from the Baltimore State Legislature website. Term definitions, where included, are from within the Baltimore City code itself. Throughout the site, links are provided to original data sources, whenever possible.  <a href="http://www.baltimorecity.gov/Government/AgenciesDepartments/LegislativeReference.aspx" target="_blank">Click here to visit the Baltimore City Department of Legislative Reference</a>, and click here to visit its <a href="http://www.baltimorecity.gov/Government/CityCharterCodes.aspx" target="_blank">production of the Baltimore City laws.</a></p>
+<p>Data Sources The information that makes up Baltimore Decoded comes entirely from public sources. All of the sections of the code are straight from the <a href="http://www.baltimorecity.gov/Government/AgenciesDepartments/LegislativeReference.aspx" target="_blank">Baltimore City Department of Legislative Reference</a>, who provided XML of the Code. Any further included legislative data is scraped from the Baltimore City Legislature website. Term definitions, where included, are from within the Baltimore City code itself. Throughout the site, links are provided to original data sources, whenever possible.  <a href="http://www.baltimorecity.gov/Government/AgenciesDepartments/LegislativeReference.aspx" target="_blank">Click here to visit the Baltimore City Department of Legislative Reference</a>, and click here to visit its <a href="http://www.baltimorecity.gov/Government/CityCharterCodes.aspx" target="_blank">production of the Baltimore City laws.</a></p>
 <h2>API</h2>
 <p>The site has a RESTful, JSON-based API. <a href="/api-key/">Register for an API key</a> and <a href="https://github.com/statedecoded/statedecoded/wiki/API-Documentation" target="_blank">read the documentation</a> for details.</p>
 <h2>Thanks</h2>
@@ -44,7 +44,7 @@ $body = '
 ';
 
 
-$sidebar = 
+$sidebar =
 '
 <section>
 <h1>Contact</h1>
