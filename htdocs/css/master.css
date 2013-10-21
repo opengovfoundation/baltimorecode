@@ -3,8 +3,8 @@
 
 	 Styles for Virginia Code Site
 	 Fall 2010
-	 
-	 Devs: 
+
+	 Devs:
 	 * all lowercase attributes
 	 * please alphabetize each attribute wihtin an element call
 
@@ -25,7 +25,7 @@
 ###############################################################################
 */
 
-/* www.aestheticallyloyal.com/public/optimize-legibility/ */ 
+/* www.aestheticallyloyal.com/public/optimize-legibility/ */
 * {
 	text-rendering: optimizelegibility; /* There have been reported problems with this, see the link above for some of the reported bugs */
 }
@@ -42,9 +42,9 @@
 
 html {
 	font-size: 100%; /*   font-size: 16px;  */
-	-webkit-overflow-scrolling: touch; 
-	-webkit-tap-highlight-color: rgba(0,0,0,0); 
-	-webkit-text-size-adjust: 100%; 
+	-webkit-overflow-scrolling: touch;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-text-size-adjust: 100%;
 	-ms-text-size-adjust: 100%;
 	position:relative;
 	overflow-x:hidden;
@@ -56,25 +56,25 @@ body {
 	overflow-x:hidden;
 }
 
-/* #444 looks better than black: twitter.com/H_FJ/statuses/11800719859 */ 
-body, 
+/* #444 looks better than black: twitter.com/H_FJ/statuses/11800719859 */
+body,
 button,
-select, 
-input, 
+select,
+input,
 textarea {
 	color: #444;
 	font-family: sans-serif;
 }
 
-table { 
+table {
 	font-size: inherit;
-	font: 100%; 
+	font: 100%;
 }
 
-select, 
-input, 
-textarea { 
-	font: 99% sans-serif; 
+select,
+input,
+textarea {
+	font: 99% sans-serif;
 }
 blockquote{
 	margin-left:2em;
@@ -83,12 +83,12 @@ ul > li{
 	margin-left:1.5em;
 }
 
-/* normalize monospace sizing 
+/* normalize monospace sizing
  * en.wikipedia.org/wiki/MediaWiki_talk:Common.css/Archive_11#Teletype_style_fix_for_Chrome
  */
-pre, 
-code, 
-kbd, 
+pre,
+code,
+kbd,
 samp {
 	font-family: monospace, sans-serif;
 }
@@ -108,14 +108,14 @@ p {
 small { font-size:85%; }
 strong, th { font-weight: bold; }
 
-td, td img { vertical-align:top; } 
+td, td img { vertical-align:top; }
 
 sub { vertical-align: sub; font-size: smaller; }
 sup { vertical-align: super; font-size: smaller; }
 
-pre { 
-	padding: 15px; 
-	
+pre {
+	padding: 15px;
+
 	/* www.pathf.com/blogs/2008/05/formatting-quoted-code-in-blog-posts-css21-white-space-pre-wrap/ */
 	white-space: pre; /* CSS2 */
 	white-space: pre-wrap; /* CSS 2.1 */
@@ -135,7 +135,7 @@ label, input[type=button], input[type=submit], button { cursor: pointer; }
 
 /* These selection declarations have to be separate.
 	 No text-shadow: twitter.com/miketaylr/status/12228805301 */
-::-moz-selection { 
+::-moz-selection {
 	background-color: #bdf;
 	color; #fff;
 	text-shadow: none;
@@ -145,20 +145,20 @@ label, input[type=button], input[type=submit], button { cursor: pointer; }
 	background-color: #bdf;
 	color; #fff;
 	text-shadow: none;
-} 
+}
 
 /*  j.mp/webkit-tap-highlight-color */
-a:link { -webkit-tap-highlight-color: #ff5E99; } 
+a:link { -webkit-tap-highlight-color: #ff5E99; }
 
 
-/* make buttons play nice in IE:  
+/* make buttons play nice in IE:
 	 www.viget.com/inspire/styling-the-button-element-in-internet-explorer/ */
 button {
-	width: auto; 
+	width: auto;
 	overflow: visible;
 }
- 
-/* bicubic resizing for non-native sized IMG: 
+
+/* bicubic resizing for non-native sized IMG:
 	 code.flickr.com/blog/2008/11/12/on-ui-quality-the-little-things-client-side-image-resizing/ */
 .ie7 img { -ms-interpolation-mode: bicubic; }
 
@@ -171,12 +171,12 @@ Non-semantic helper classes */
 
 /* Hide for both screenreaders and browsers
 	 css-discuss.incutio.com/wiki/Screenreader_Visibility */
-.hidden { display:none; visibility:hidden; } 
+.hidden { display:none; visibility:hidden; }
 
-/* Hide only visually, but have it available for screenreaders 
-	 www.webaim.org/techniques/css/invisiblecontent/ 
+/* Hide only visually, but have it available for screenreaders
+	 www.webaim.org/techniques/css/invisiblecontent/
 	 Solution from: j.mp/visuallyhidden - Thanks Jonathan Neal! */
-.visuallyhidden { position:absolute !important;  
+.visuallyhidden { position:absolute !important;
 	clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
 	clip: rect(1px, 1px, 1px, 1px); }
 
@@ -189,7 +189,7 @@ Non-semantic helper classes */
 * html .clearfix { height: 1%; } /* Hides from IE-mac \*/
 .clearfix { display: block; }
 
-/* 
+/*
 ###############################################################################
 END RESET/STANDARIZED STUFF, START INTERNAL STYLES */
 
@@ -199,13 +199,13 @@ html {
 
 body {
 	background-color: #fff;
-	background-image: url("/images/templates/default/bkgnd-noise.png");
-	background-repeat: repeat;
+	background-image: url("/images/templates/default/bkgnd-header.png"), url("/images/templates/default/bkgnd-noise.png");
+	background-repeat: repeat-x, repeat;
 	background-position: top left, top left;
 	font-family: Georgia, "Times New Roman", serif; /*"Hoefler Text", Baskerville, Garamond, "Palatino Linotype",*/
 	margin: 0;
 	min-width: 300px;
-	/* padding: 2.0em; */
+	padding: 2.0em;
 }
 
 abbr {
@@ -218,7 +218,7 @@ abbr {
 }
 
 
-/* 
+/*
 ###############################################################################
 HEADLINES */
 
@@ -240,12 +240,12 @@ a:active {
 	outline: none;
 }
 
-a, 
+a,
 a:link {
 	color: #1b8be1;
 }
 
-a:hover, 
+a:hover,
 a:active {
 	color: #00baff;
 }
@@ -256,10 +256,10 @@ a:visited{
 
 /* Link overrides */
 
-header a, 
-header a:link, 
-header a:hover, 
-header a:active, 
+header a,
+header a:link,
+header a:hover,
+header a:active,
 header a:visited {
 	padding: 5px;
 	text-decoration: none;
@@ -269,10 +269,10 @@ header a:hover {
 	text-decoration: underline;
 }
 
-footer a, 
-footer a:link, 
-footer a:hover, 
-footer a:active, 
+footer a,
+footer a:link,
+footer a:hover,
+footer a:active,
 footer a:visited {
 	color: #fff;
 }
@@ -304,7 +304,7 @@ section#sidebar {
 	width: 25%;
 }
 
-/* 
+/*
 ###############################################################################
 # HEADER
 ###############################################################################
@@ -312,13 +312,11 @@ section#sidebar {
 
 header {
 	position: relative;
-	top:2em;
 }
 
 header hgroup {
 	margin: 0 auto;
 	text-align: center;
-	width: 415px;
 }
 
 header h1 {
@@ -328,7 +326,7 @@ header h1 {
 	-webkit-font-smoothing: antialiased;
 	font-smoothing: antialiased;
 	font-weight: normal;
-	margin-bottom: 15px;
+	margin-bottom: 10px;
 	letter-spacing: -0.03em;
 	text-shadow: 0px 1px 2px #fff,
 	             0px -1px 1px #49585d;
@@ -343,30 +341,20 @@ header h1 {
 		}
 
 header h2 {
-	background: transparent url('/images/templates/default/h2_tagline.png') no-repeat top left;
-	height: 59px;
-	width: 415px;
+	color: #555;
+	font-family: "Hoefler Text", Baskerville, Garamond, "Palatino Linotype", Georgia, "Times New Roman", serif;
+	font-size: 1.2em;
+	-webkit-font-smoothing: antialiased;
+	font-smoothing: antialiased;
+	font-weight: normal;
+	margin-bottom: 20px;
 }
 
 header nav#main_navigation {
 	margin-bottom: 24px;
-	width:100%;
-	background: #606e72; /* Old browsers */
-	background: -moz-linear-gradient(top, #606e72 0%, #3e4648 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#606e72), color-stop(100%,#3e4648)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top, #606e72 0%,#3e4648 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top, #606e72 0%,#3e4648 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top, #606e72 0%,#3e4648 100%); /* IE10+ */
-	background: linear-gradient(to bottom, #606e72 0%,#3e4648 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#606e72', endColorstr='#3e4648',GradientType=0 ); /* IE6-9 */
-	box-shadow:.1em .1em 1em black;
-	border-top:1px solid white;
-	border-bottom:1px solid white;
-	left:-2em;
-	padding:10px 0;
-	margin-top:2em;
-	overflow:hidden;
-	height:30px;
+	position: absolute;
+	top: 75px;
+	width: 100%;
 }
 
 header nav#main_navigation ul {
@@ -469,7 +457,7 @@ section#user_actions nav#user_functions ul li:first-child {
 
 
 
-/* 
+/*
 ###############################################################################
 # MAIN CONTENT
 ###############################################################################
@@ -567,12 +555,12 @@ section#sidebar {
 	  -webkit-hyphens: auto;
 	  -moz-hyphens: auto;
 	}
-	
+
 		section#sidebar section:last-child {
 		  border-bottom: none;
 		  padding-bottom: 0;
 		}
-	
+
 		section#sidebar section#portfolio {
 		  background: #696153 url('/images/templates/default/bkgnd_portfolio.jpg') top left no-repeat;
 		  position: relative;
@@ -580,7 +568,7 @@ section#sidebar {
 		  overflow: hidden;
 		  padding-bottom: 0em;
 		}
-		
+
 			section#sidebar section#portfolio h1 {
 			  background: transparent url('/images/h_add-to-portfolio.png') top left no-repeat;
 			  float: left;
@@ -612,7 +600,7 @@ div#portfolio-toggle {
 	  color: #fdd017;
 	  text-shadow: #666 1px 1px 3px;
 	}
-	
+
 	div#portfolio-toggle:hover {
 	  cursor: pointer;
 	}
@@ -639,7 +627,7 @@ section#sidebar ul li {
 	  text-decoration: none;
 	  color: #fff;
 	  background-color: #000;
-	  cursor: default; 
+	  cursor: default;
 	}
 
 /* Tag Clouds */
@@ -769,15 +757,15 @@ section#comments h3 {
 }
 
 /* Section listings */
-dl.level-1 dt, 
-dl.level-2 dt, 
+dl.level-1 dt,
+dl.level-2 dt,
 dl.laws dt {
 	float: left;
 	clear: left;
 	margin-right: 5px;
 	font-weight: bold;
 }
- 
+
 dl.laws dt {
 	width: 130px;
 }
@@ -799,7 +787,7 @@ dl.level-2 dd a, dl.laws dd a, dl.level-1 dd a {
 }
 
 
-/* 
+/*
 ###############################################################################
 # FOOTER
 ###############################################################################
@@ -832,7 +820,7 @@ footer {
 	  float: right;
 	  margin: 0 0 10px 10px;
 	}
-/* 
+/*
 ###############################################################################
 # RESPONSIVE TYPESETTING
 ###############################################################################
@@ -857,7 +845,7 @@ footer {
 }
 
 
-/* 
+/*
 ###############################################################################
 MEDIA QUERIES AND RESPONSIVE CLASSES*/
 
@@ -877,16 +865,16 @@ MEDIA QUERIES AND RESPONSIVE CLASSES*/
 	line-height:13px;
 	padding:3px 3px 4px 3px;
 	text-shadow: #000 1px 1px 0;
-	
+
 	-moz-transform: rotate(-45deg);  /* FF3.5+ */
 	-o-transform: rotate(-45deg);  /* Opera 10.5 */
 	-webkit-transform: rotate(-45deg);  /* Saf3.1+, Chrome */
 	transform: rotate(-45deg);  /* CSS3 (for when it gets supported) */
-	
-	box-shadow: rgba(0,0,0, 0.2) 0px 0px 6px;  
-	-moz-box-shadow: rgba(0,0,0, 0.2) 0px 0px 6px;  
-	-webkit-box-shadow: rgba(0,0,0, 0.2) 0px 0px 6px;     
-	-o-box-shadow: rgba(0,0,0, 0.2) 0px 0px 6px;     
+
+	box-shadow: rgba(0,0,0, 0.2) 0px 0px 6px;
+	-moz-box-shadow: rgba(0,0,0, 0.2) 0px 0px 6px;
+	-webkit-box-shadow: rgba(0,0,0, 0.2) 0px 0px 6px;
+	-o-box-shadow: rgba(0,0,0, 0.2) 0px 0px 6px;
 }
 	#corner-banner a {
 		letter-spacing: 1px;
@@ -898,7 +886,7 @@ MEDIA QUERIES AND RESPONSIVE CLASSES*/
 		display:block;
 		text-decoration: none;
 	}
-	
+
 /** Pagination **/
 #navigation{
 	border-bottom:1px solid black;

@@ -63,9 +63,16 @@ define('SITE_TITLE', 'Baltimore Decoded');
 define('PLACE_NAME', 'City');
 
 /*
+ * What's is the base url?
+ */
+define('HOME_SITE_URL', 'http://baltimorecode.org/');
+
+define('BASE_SITE_DOMAIN', 'baltimorecode.org');
+
+/*
  * What does this state call its laws?
  */
-define('LAWS_NAME', 'Code of Public Laws');
+define('LAWS_NAME', 'Baltimore Code of Public Local Laws');
 
 /*
  * What is the prefix that indicates a section? In many states, this is §, but in others it might be
