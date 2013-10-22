@@ -158,7 +158,6 @@
 							}
 
 						}
-						if($part) var_dump($part);
 
 						//Split the first line (Section top-level information)
 						$lines = preg_split('/\r\n|\r|\n/', $section, 2);
@@ -170,7 +169,6 @@
 						$ret = preg_match('@(\d+[A-Z]?-?\d*\s?[to]*\s?\d*[A-Z]?-?\d*)\.?@', $lines[0], $identifier);
 
 						if($ret === 0 || $ret === false){
-							var_dump($subtitle_title, $matches, $section);
 							throw new Exception("Error getting section number in $filename " .
 								"for line: " . print_r($lines[0], true) . "\n" .
 								"****\n" .
