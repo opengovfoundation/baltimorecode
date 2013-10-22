@@ -65,6 +65,8 @@
 
 			//Loop through the subtitles
 			foreach($subtitles as $index => $content){
+				// Parts are sub-subtitles (?);
+				unset($part);
 
 				if($index % 2 != 0){//Odd indexes are the subtitle labels
 					$ret = preg_match_all('@Subtitles?\s([0-9A]+)\s?[to]*\s?([0-9A]*)@', $content, $matches);
@@ -100,14 +102,18 @@
 						//If the index is zero, we have the Subtitle name
 						if($index == 0){
 							//Part 1 almost always comes right after the section title.
-							if(preg_match("/\n(Part\.? [0-9]+\.)  /", $section, $matches))
+							if(preg_match("/\n(Part\.? +([0-9]+)\.)  /", $section, $matches))
 							{
-								list($subtitle_title, $part) = preg_split("/\nPart\.? [0-9]+\.  /", $section);
+								list($subtitle_title, $part_name) = preg_split("/\nPart\.? +[0-9]+\.  /", $section);
+								$subtitle_title = trim($subtitle_title);
 
-								list($part, $section) = preg_split("/\n+/", $part, 2);
 
-								// TODO: We need to handle parts here.
-								// Note: Parts have Editor's notes!!!
+								list($part_name, $section) = preg_split("/\n+/", $part_name, 2);
+
+								$part = array(
+									'index' => $matches[2],
+									'title' => $part_name
+								);
 
 								if(!$section)
 								{
@@ -123,12 +129,36 @@
 						}
 
 						// Parts may appear at the bottom.
-						list($section, $part) = preg_split("/\n\nPart\.? [0-9]+\.  /", $section);
-						if($part)
+						// If that's the case, we add it to the *next* section.
+
+						// Note: We're making the assumption here that parts only come at
+						// the *top* or *bottom* of sections.  That's a pretty safe bet,
+						// but keep an eye on this!
+
+						if(preg_match("/\n\nPart\.? +([0-9]+)\. +/", $section, $matches))
 						{
-							// TODO: We need to handle parts here.
-							// Note: Parts have Editor's notes!!!
+							$pieces = preg_split("/\n\n(Part\.? +[0-9]+\. +.*)(?:\n|$)/", $section, -1, PREG_SPLIT_DELIM_CAPTURE);
+							$pieces = array_filter($pieces);
+							$section = '';
+
+							foreach($pieces as $key => $piece)
+							{
+								$piece = trim($piece);
+								if(preg_match('/Part\.? +([0-9]+)\. +(.*)/', $piece, $matches))
+								{
+									$temp_part = array(
+										'index' => $matches[1],
+										'title' => $matches[2]
+									);
+								}
+								else
+								{
+									$section .= $piece;
+								}
+							}
+
 						}
+						if($part) var_dump($part);
 
 						//Split the first line (Section top-level information)
 						$lines = preg_split('/\r\n|\r|\n/', $section, 2);
@@ -159,6 +189,12 @@
 						$tempSection->addParent(1, 'Article', $article_index, $article_title);
 
 						$tempSection->addParent(2, 'Subtitle', $subtitle_index, $subtitle_title);
+
+						if($part)
+						{
+							$tempSection->addParent(3, 'Part', $part['index'], $part['title']);
+						}
+
 						$tempSection->setIdentifier($identifier[1]);
 						$tempSection->setContent($lines[1]);
 						$tempSection->setCatchLine($catch_line);
@@ -170,6 +206,13 @@
 
 						$tempSection->toXML();
 						$tempSection->saveXML('Art' . $article_index . '-' . str_replace(' ', '-', $identifier[1]) . '.xml');
+
+						// Add any parts we'd stored earlier.
+						if($temp_part)
+						{
+							$part = $temp_part;
+							unset($temp_part);
+						}
 					}
 				}
 			}
