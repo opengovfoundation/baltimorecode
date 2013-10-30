@@ -770,6 +770,14 @@ class Parser
 		foreach ($this->code->structure as $struct)
 		{
 
+			/*
+			 * For Baltimore, we need to strip the leading '0' from article identifiers.
+			 */
+			if($struct->label == 'Article' && substr($struct->identifier, 0, 1) == '0')
+			{
+				$struct->identifier = substr($struct->identifier, 1);
+			}
+
 			$structure->identifier = $struct->identifier;
 			$structure->name = $struct->name;
 
