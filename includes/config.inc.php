@@ -98,7 +98,7 @@ define('INCLUDES_REPEALED', FALSE);
  * use long URLs (e.g. <http://example.com/56/21/12.3-45:67/>), which are URLs that incorporate
  * the structures that contain each law.
  */
-define('LAW_LONG_URLS', FALSE);
+define('LAW_LONG_URLS', TRUE);
 
 /*
  * The DSN to connect to MySQL.
