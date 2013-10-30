@@ -50,8 +50,13 @@ class API
 		 */
 		$sql = 'SELECT api_key
 				FROM api_keys
-				WHERE verified="y"';
-		$result = $db->query($sql);
+				WHERE verified=:verified';
+		$sql_args = array(
+			':verified' => 'y'
+		);
+
+		$statement = $db->prepare($sql);
+		$result = $statement->execute($sql_args);
 
 		/* If the database has returned an error. */
 		if ($result === FALSE)
@@ -68,7 +73,7 @@ class API
 		/*
 		 * If no API keys have been registered.
 		 */
-		if ($result->rowCount() == 0)
+		if ($statement->rowCount() == 0)
 		{
 			return TRUE;
 		}
@@ -77,7 +82,7 @@ class API
 		 * If API keys have been registered, iterate through them and store them.
 		 */
 		$i=0;
-		while ($key = $result->fetch(PDO::FETCH_OBJ))
+		while ($key = $statement->fetch(PDO::FETCH_OBJ))
 		{
 			$this->all_keys->{$key->api_key} = TRUE;
 			$i++;
@@ -110,16 +115,21 @@ class API
 		 */
 		$sql = 'SELECT id, api_key, email, name, url, verified, secret, date_created
 				FROM api_keys
-				WHERE key = ' . $db->quote($this->key);
-		$result = $db->query($sql);
+				WHERE api_key = :key';
+		$sql_args = array(
+			':key' => $this->key
+		);
+
+		$statement = $db->prepare($sql);
+		$result = $statement->execute($sql_args);
 
 		/*
 		 * If the query succeeds then retrieve the result.
 		 */
-		if ($result != FALSE)
+		if ($result != FALSE && $statement->rowCount() > 0)
 		{
 
-			$api_key = $result->fetch(PDO::FETCH_OBJ);
+			$api_key = $statement->fetch(PDO::FETCH_OBJ);
 
 			/*
 			 * Bring the result into the scope of the object.
@@ -138,22 +148,83 @@ class API
 
 
 	/**
+	 * Validate a key.
+	 *
+	 * Accepts a key provided directly from the GET request. Invalid keys yield errors
+	 */
+
+	function validate_key()
+	{
+
+		/*
+		 * Only proceed if a key has been provided.
+		 */
+		if (!isset($this->key))
+		{
+			throw new Exception('No API key provided.');
+			return FALSE;
+		}
+
+		/*
+		 * Make sure that the provided API key is the correct length.
+		 */
+		if ( strlen($this->key) != 16 )
+		{
+			throw new Exception('Invalid API key.');
+			return FALSE;
+		}
+
+		/*
+		 * Clean up the API key, filtering out unsafe characters.
+		 */
+		$this->key = filter_var($this->key, FILTER_SANITIZE_STRING);
+
+		/*
+		 * Retrieve a list of every valid key.
+		 */
+		$this->list_all_keys();
+
+		/*
+		 * If the provided API key has no content, post-filtering, or if there are no registered API
+		 * keys.
+		 */
+		if ( empty($this->key) || (count($this->all_keys) == 0) )
+		{
+			throw new Exception('API key not provided. Please register for an API key.');
+			return FALSE;
+		}
+
+		/*
+		 * But if there are API keys, and our key is valid-looking, check whether the key is registered.
+		 */
+		elseif (!isset($this->all_keys->{$this->key}))
+		{
+			throw new Exception('Invalid API key.');
+			return FALSE;
+		}
+
+		return TRUE;
+
+	}
+
+
+	/**
 	 * Display a registration form.
 	 */
 	function display_form()
 	{
 
 		$form = '
-			<form method="post" action="/api-key/" id="api-registration">
+			<form method="post" action="/downloads/" id="api-registration">
 
 				<label for="name">Your Name</label>
-				<input type="name" id="name" name="form_data[name]" placeholder="John Doe" value="'.$this->form->name.'" />
+				<input type="name" id="name" name="form_data[name]" placeholder="John Doe" value="' . ((isset($this->form)) ? $this->form->name : '' ) . '" />
 
 				<label for="email">E-Mail Address <span class="required">*</span></label>
-				<input type="email" id="email" name="form_data[email]" placeholder="john_doe@example.com" required value="'.$this->form->email.'" />
+				<input type="email" id="email" name="form_data[email]" placeholder="john_doe@example.com" required value="' . ((isset($this->form)) ? $this->form->email : '' ) . '" />
 
 				<label for="url">Website URL</label>
-				<input type="url" id="url" name="form_data[url]" placeholder="http://www.example.com/" value="'.$this->form->url.'" />
+				<input type="url" id="url" name="form_data[url]" placeholder="http://www.example.com/" value="' . ((isset($this->form)) ? $this->form->url : '' ) . '" />
 
 				<input type="submit" value="Submit" />
 
@@ -228,23 +299,34 @@ class API
 		 * Assemble the SQL query.
 		 */
 		$sql = 'INSERT INTO api_keys
-				SET api_key = ' . $db->quote($this->key) . ',
-				email = ' . $db->quote($this->email) . ',
-				secret = ' . $db->quote($this->secret) . ',
+				SET api_key = :key,
+				email = :email,
+				secret = :secret,
 				date_created = now()';
+		$sql_args = array(
+			':key' => $this->key,
+			':email' => $this->email,
+			':secret' => $this->secret
+		);
+
 		if (!empty($this->name))
 		{
-			$sql .= ', name=' . $db->quote($this->name);
+			$sql .= ', name = :name';
+			$sql_args[':name'] = $this->name;
 		}
 		if (!empty($this->url))
 		{
-			$sql .= ', url=' . $db->quote($this->url);
+			$sql .= ', url = :url';
+			$sql_args[':url'] = $this->url;
 		}
+
+		$statement = $db->prepare($sql);
+		$result = $statement->execute($sql_args);
 
 		/*
 		 * Insert this record.
 		 */
-		$result = $db->exec($sql);
+
 		if ($result === FALSE)
 		{
 			throw new Exception('API key could not be created.');
@@ -277,8 +359,13 @@ class API
 		 */
 		$sql = 'UPDATE api_keys
 				SET verified = "y"
-				WHERE secret = ' . $db->quote($this->secret);
-		$result = $db->exec($sql);
+				WHERE secret = :secret';
+		$sql_args = array(
+			':secret' => $this->secret
+		);
+
+		$statement = $db->prepare($sql);
+		$result = $statement->execute($sql_args);
 
 		if ($result === FALSE)
 		{
@@ -287,11 +374,17 @@ class API
 
 		$sql = 'SELECT api_key
 				FROM api_keys
-				WHERE secret = ' . $db->quote($this->secret);
-		$result = $db->query($sql);
+				WHERE secret = :secret';
+		$sql_args = array(
+			':secret' => $this->secret
+		);
+
+		$statement = $db->prepare($sql);
+		$result = $statement->execute($sql_args);
+
 		if ($result !== FALSE)
 		{
-			$api_key = $result->fetch(PDO::FETCH_OBJ);
+			$api_key = $statement->fetch(PDO::FETCH_OBJ);
 			$this->key = $api_key->api_key;
 		}
 
@@ -324,9 +417,23 @@ class API
 			return FALSE;
 		}
 
+		$url = 'http://';
+		if ( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['SERVER_PORT'] == 443) )
+		{
+			$url = 'https://';
+		}
+		$url .= $_SERVER['SERVER_NAME'];
+
+		if($_SERVER['SERVER_PORT'] != '80')
+		{
+			$url .= ':80';
+		}
+
+		$url .= '/downloads/?secret=' . $this->secret;
+
 		$email->body = 'Click on the following link to activate your ' . SITE_TITLE . ' API key.'
 			. "\r\r"
-			. 'http://' . $_SERVER['SERVER_NAME'] . '/api-key/?secret=' . $this->secret;
+			. $url;
 		$email->subject = SITE_TITLE . ' API Registration';
 		$email->headers = 'From: ' . EMAIL_NAME . ' <' . EMAIL_ADDRESS . ">\n"
 						.'Return-Path: ' . EMAIL_NAME . ' <' . EMAIL_ADDRESS . ">\n"
