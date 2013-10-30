@@ -29,12 +29,12 @@ define('SITE_TITLE', 'Baltimore Decoded');
 /*
  * What is the name of the place that these laws govern?
  */
-define('PLACE_NAME', 'City');
+define('PLACE_NAME', 'Baltimore');
 
 /*
  * What does this place call its laws?
  */
-define('LAWS_NAME', 'Baltimore Code of Public Local Laws');
+define('LAWS_NAME', 'Baltimore City Code');
 
 /*
  * Define the data dir.
@@ -55,7 +55,7 @@ define('WEB_ROOT', $_SERVER['DOCUMENT_ROOT']);
 /*
  * Define the location of the files to import.
  */
-define('IMPORT_DATA_DIR', WEB_ROOT . '/admin/import-data/');
+define('IMPORT_DATA_DIR', WEB_ROOT . '/admin/data/');
 
 /*
  * What's is the base url?
@@ -77,7 +77,7 @@ define('TEMPLATE_DIR', WEB_ROOT . '/themes/');
 /*
  * Which theme to use.
  */
-define('THEME_NAME', 'StateDecoded2013');
+define('THEME_NAME', 'BaltimoreCode2013');
 define('THEME_DIR', TEMPLATE_DIR . THEME_NAME . '/');
 define('THEME_WEB_PATH', '/themes/' . THEME_NAME . '/');
 
