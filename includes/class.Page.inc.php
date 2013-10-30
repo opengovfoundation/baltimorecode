@@ -106,6 +106,26 @@ class Page
 			$html = file_get_contents($template_file);
 		}
 
+		return $html;
+
+	}
+
+
+	/**
+	 * A shortcut for all steps necessary to turn variables into an output page.
+	 */
+	public function parse($content)
+	{
+		return $this->display($this->render($content));
+	}
+
+
+	/**
+	 * Combine the populated variables with the template.
+	 */
+	public function render($content)
+	{
+
 		/*
 		 * Make a copy of the template here, so we can re-render as often
 		 * as we like with new content.
@@ -121,6 +141,54 @@ class Page
 		{
 			$template = str_replace('{{' . $field . '}}', $value, $template);
 		}
+
+		$this->after_render($template, $content);
+
+		return $template;
+
+	}
+
+
+	/**
+	 * Pre-rendering.
+	 */
+	public function before_render(&$template, &$content)
+	{
+
+	}
+
+
+	/**
+	 * Post-rendering.
+	 */
+	public function after_render(&$template, &$content)
+	{
+
+	}
+
+
+	/**
+	 * Send the page to the browser.
+	 */
+	public function display($content)
+	{
+
+		if (!isset($content))
+		{
+			return FALSE;
+		}
+
+		echo $content;
+		return TRUE;
+
+	}
+
+
+	/**
+	 * Add a new asset.
+	 */
+	public function add_asset($name, $asset = array())
+	{
 
 		/*
 		 * If we have a local path.

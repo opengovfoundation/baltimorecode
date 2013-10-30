@@ -1275,12 +1275,6 @@ class Parser
 			$sql .= ', metadata = :metadata';
 			$sql_args[':metadata'] = serialize($this->metadata);
 		}
-		if(isset($this->metadata))
-		{
-			$sql .= ', metadata=' . $this->db->quote(
-				serialize($this->metadata)
-			);
-		}
 
 		$statement = $this->db->prepare($sql);
 		$result = $statement->execute($sql_args);
