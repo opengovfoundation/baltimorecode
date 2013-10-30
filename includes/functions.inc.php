@@ -419,3 +419,36 @@ function object_to_xml( $array, $xml )
 	return $xml;
 
 }
+
+/*
+ * Recursively get all files
+ */
+
+function get_files($path, $files = array())
+{
+	if(substr($path, -1, 1) != '/')
+	{
+		$path .= '/';
+	}
+
+	$directory = dir($path);
+
+	while (FALSE !== ($filename = $directory->read()))
+	{
+
+		$file_path = $path . $filename;
+		if (substr($filename, 0, 1) !== '.')
+		{
+			if(is_file($file_path))
+			{
+				$files[] = $file_path;
+			}
+			elseif(is_dir($file_path))
+			{
+				$files = get_files($file_path, $files);
+			}
+		}
+	}
+
+	return $files;
+}
