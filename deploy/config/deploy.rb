@@ -58,11 +58,11 @@ after "deploy:finalize_update" do
   # Remove the existing downloads dir.
   run "rm -R #{release_path}/htdocs/downloads"
   run "ln -nfs #{shared_path}/downloads #{release_path}/htdocs/downloads"
-  # This will be problematic later, until we disambiguate the data dirs.
-  run "mkdir #{release_path}/htdocs/admin/data"
+  run "ln -nfs #{shared_path}/data #{release_path}/htdocs/admin/data"
   run "chmod g+rw #{release_path}/htdocs/admin/data"
   run "chmod g+rw #{release_path}/htdocs/sitemap.xml"
   run "chmod g+rw #{release_path}/htdocs/.htaccess"
+
 end
 
 # Setup the shared folders.  Since we don't symlink these directly,
