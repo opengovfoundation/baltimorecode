@@ -54,11 +54,15 @@ set :shared_children, []
 after "deploy:finalize_update" do
   run "ln -nfs #{shared_path}/includes/config.inc.php #{release_path}/includes/config.inc.php"
 #  run "ln -nfs #{shared_path}/data #{release_path}/htdocs/admin/xml"
-  run "chmod a+rw #{release_path}/htdocs/admin/xml"
+  run "chmod g+rw #{release_path}/htdocs/admin/xml"
+  # Remove the existing downloads dir.
+  run "rm -R #{release_path}/htdocs/downloads"
   run "ln -nfs #{shared_path}/downloads #{release_path}/htdocs/downloads"
   # This will be problematic later, until we disambiguate the data dirs.
   run "mkdir #{release_path}/htdocs/admin/data"
-  run "chmod a+rw #{release_path}/htdocs/admin/data"
+  run "chmod g+rw #{release_path}/htdocs/admin/data"
+  run "chmod g+rw #{release_path}/htdocs/sitemap.xml"
+  run "chmod g+rw #{release_path}/htdocs/.htaccess"
 end
 
 # Setup the shared folders.  Since we don't symlink these directly,
@@ -66,7 +70,7 @@ end
 after "deploy:setup" do
   run "mkdir #{shared_path}/data"
   run "mkdir #{shared_path}/downloads"
-  run "chmod a+rw #{shared_path}/downloads"
+  run "chmod g+rw #{shared_path}/downloads"
   run "mkdir #{shared_path}/includes"
 end
 
