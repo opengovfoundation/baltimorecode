@@ -655,7 +655,7 @@ class ParserController
 		/*
 		 * If we already have a view, replace it with this new one.
 		 */
-		$this->logger->message('Replace old view', 3);
+		$this->logger->message('Mapping the structure of the laws', 3);
 
 		$sql = 'DROP VIEW IF EXISTS structure_unified';
 		$statement = $this->db->prepare($sql);
@@ -1089,8 +1089,8 @@ class ParserController
 			$token = implode('/', $identifier_parts);
 
 			/*
-			 * This is slightly different from how we handle permalinks
-			 * since we don't want to overwrite files if current has changed.
+			 * This is slightly different from how we handle permalinks since we don't want to
+			 * overwrite files if current has changed.
 			 */
 
 			$url = '/';
@@ -1240,8 +1240,6 @@ class ParserController
 				while ($section = $laws_statement->fetch(PDO::FETCH_OBJ))
 				{
 
-					$this->logger->message('Writing '.$section->section_number, 3);
-
 					/*
 					 * Pass the requested section number to Law.
 					 */
@@ -1255,7 +1253,7 @@ class ParserController
 					 */
 					$law = $laws->get_law();
 
-					if($law)
+					if ($law !== FALSE)
 					{
 						/*
 						 * Eliminate colons from section numbers, since some OSes can't handle colons in
@@ -1279,26 +1277,6 @@ class ParserController
 						}
 
 						/*
-						 * Store the XML file.
-						 */
-						if ($write_xml === TRUE)
-						{
-							$law->html = html_entity_decode($law->html);
-							$xml = new SimpleXMLElement('<law />');
-							object_to_xml($law, $xml);
-							$dom = dom_import_simplexml($xml)->ownerDocument;
-							$dom->formatOutput = true;
-
-							$success = file_put_contents($xml_dir . $filename . '.xml', $xml->asXML());
-							if ($success === FALSE)
-							{
-								$this->logger->message('Could not write law XML files', 9);
-								break;
-							}
-
-						}
-
-						/*
 						 * Store the text file.
 						 */
 						if ($write_text === TRUE)
@@ -1312,6 +1290,48 @@ class ParserController
 							}
 
 						}
+
+						/*
+						 * Store the XML file.
+						 */
+						if ($write_xml === TRUE)
+						{
+						
+							$law->catch_line = html_entity_decode($law->catch_line);
+							unset($law->plain_text);
+							unset($law->structure_contents);
+							unset($law->next_section);
+							unset($law->previous_section);
+							unset($law->amendment_years);
+							unset($law->dublin_core);
+							unset($law->plain_text);
+							unset($law->section_id);
+							unset($law->structure_id);
+							unset($law->edition_id);
+							unset($law->full_text);
+							unset($law->formats);
+							unset($law->html);
+							$law->structure = $law->ancestry;
+							unset($law->ancestry);
+							$law->referred_to_by = $law->references;
+							unset($law->references);
+
+							$law = html_entity_decode_object($law);
+							
+							$xml = new SimpleXMLElement('<law />');
+							object_to_xml($law, $xml);
+							$dom = dom_import_simplexml($xml)->ownerDocument;
+							$dom->formatOutput = true;
+
+							$success = file_put_contents($xml_dir . $filename . '.xml', $xml->asXML());
+							if ($success === FALSE)
+							{
+								$this->logger->message('Could not write law XML files', 9);
+								break;
+							}
+
+						}
+						
 					} // end the $law exists condition
 
 				} // end the while() law iterator
@@ -1729,18 +1749,21 @@ class ParserController
 	 */
 	function index_laws()
 	{
-		if(!isset($this->edition))
+		
+		if (!isset($this->edition))
 		{
 			throw new Exception('No edition, cannot index laws.');
 		}
 
-		if($this->edition['current'] != '1')
+		if ($this->edition['current'] != '1')
 		{
 			$this->logger->message('The edition is not current, skipping update to search index.');
 			return;
 		}
+		
 		else
 		{
+			
 			$this->logger->message('Updating search index.');
 
 			/*
@@ -1763,9 +1786,9 @@ class ParserController
 			/*
 			 * Create an array, $files, with a list of every XML file.
 			 *
-			 * We don't bother to check whether each file is readable because a) these files were just
-			 * created by the exporter and b) it's really too slow on the order of tens or hundreds of
-			 * thousands of files.
+			 * We don't bother to check whether each file is readable because a) these files were
+			 * just created by the exporter and b) it's really too slow on the order of tens or
+			 * hundreds of thousands of files.
 			 */
 			$files = get_files($path);
 
@@ -1776,18 +1799,45 @@ class ParserController
 			}
 
 			/*
-			 * If we have a list of files with XML problems, then remove those from the list of files
-			 * to import. If a single file in a batch has XML errors, then the entire batch is rejected,
-			 * so it's better to omit a file than to risk that.
+			 * See if any of these files contain invalid XML. We run xmllint, extract filenames from
+			 * the output, and put those on a blacklist. This is because Solr reacts badly to
+			 * invalid XML, and it's best that it not encounter any.
+			 *
+			 * We do this in a strange fashion, but for good cause. xmllint appears to be written in
+			 * such a fashion that makes it impossible for exec() to capture its output. Maybe it
+			 * explicitly writes to the console rather than STDOUT, maybe something else is going
+			 * on, but the simple solution is to redirect xmllint's output to a file, retrieve the
+			 * contents of that file, and then delete the file.
 			 */
-			if (isset($this->invalid_xml))
+			$this->logger->message('Validating XML files before indexing them');
+			exec('xmllint --noout ' . $path . '1-1* > ' . $path . 'xmllint.txt 2>&1');
+			$output = file_get_contents($path . 'xmllint.txt');
+			unlink($path . 'xmllint.txt');
+			
+			/*
+			 * Extract filenames from the output.
+			 */
+			if (preg_match_all('/' . preg_quote($path, '/') . '(.+)\.xml\:/', $output, $matches) !== FALSE)
 			{
-				foreach ($this->invalid_xml as $entry)
+				
+				$invalid_xml = array();
+				if (count($matches[1]) > 0)
 				{
-					$key = array_search($entry, $files);
-					echo 'Removed ' . $files[$key] . ' for invalid XML.<br />';
-					unset($files[$key]);
+					
+					$this->logger->message('preg_match_all did not return an error');
+					foreach ($matches[1] as $match)
+					{
+					
+						$key = array_search($match, $files);
+						unset($files[$key]);
+						
+					}
+					$this->logger->message('Suppressing the indexing of ' .
+						number_format( count($this->invalid_xml) ) . ' laws, for the presence of'
+						. ' invalid XML');
+					
 				}
+				
 			}
 
 			/*
@@ -1886,6 +1936,7 @@ class ParserController
 			$this->logger->message('Laws indexed with Solr successfully.', 7);
 
 			return TRUE;
+			
 		}
 
 	}
