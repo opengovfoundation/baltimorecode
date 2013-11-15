@@ -5,10 +5,8 @@
  *
  * PHP version 5
  *
- * @author		Waldo Jaquith <waldo at jaquith.org>
- * @copyright	2010-2012 Waldo Jaquith
  * @license		http://www.gnu.org/licenses/gpl.html GPL 3
- * @version		0.7
+ * @version		0.8
  * @link		http://www.statedecoded.com/
  * @since		0.3
 */
@@ -549,7 +547,6 @@ class Parser
 			$identifier_parts = array_reverse($identifier_parts);
 			$token = implode('/', $identifier_parts);
 
-
 			if ($item['current_edition'])
 			{
 				$url = '/' . $token . '/';
@@ -619,14 +616,15 @@ class Parser
 
 			while($law = $laws_statement->fetch(PDO::FETCH_ASSOC))
 			{
-				$law_token = $law['section_number'];
-
 				if(defined('LAW_LONG_URLS') && LAW_LONG_URLS === TRUE)
 				{
+					$law_token = $token . '/' . $law['section_number'];
 					$law_url = $url . $law['section_number'];
 				}
 				else
 				{
+					$law_token = $law['section_number'];
+
 					if ($item['current_edition'])
 					{
 						$law_url = '/' . $law['section_number'] . '/';
@@ -1847,7 +1845,7 @@ class Parser
 		/*
 		 * Find every string that fits the acceptable format for a state code citation.
 		 */
-		preg_match_all(SECTION_PCRE, $this->text, $matches);
+		preg_match_all(SECTION_REGEX, $this->text, $matches);
 
 		/*
 		 * We don't need all of the matches data -- just the first set. (The others are arrays of
@@ -1979,7 +1977,7 @@ class Parser
 				}
 				if (!empty($matches[3]))
 				{
-					$result = preg_match(SECTION_PCRE, $update, $matches[3]);
+					$result = preg_match(SECTION_REGEX, $update, $matches[3]);
 					if ( ($result !== FALSE) && ($result !== 0) )
 					{
 						$final->{$i}->section = $matches[0];
@@ -2041,7 +2039,7 @@ class Parser
 					/*
 					 * Locate any section identifier.
 					 */
-					$result = preg_match(SECTION_PCRE, $update, $matches);
+					$result = preg_match(SECTION_REGEX, $update, $matches);
 					if ( ($result !== FALSE) && ($result !== 0) )
 					{
 						$final->{$i}->section = $matches[0];

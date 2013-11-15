@@ -5,10 +5,8 @@
  *
  * PHP version 5
  *
- * @author		Waldo Jaquith <waldo at jaquith.org>
- * @copyright	2010-2013 Waldo Jaquith
  * @license		http://www.gnu.org/licenses/gpl.html GPL 3
- * @version		0.7
+ * @version		0.8
  * @link		http://www.statedecoded.com/
  * @since		0.1
  *
@@ -426,7 +424,8 @@ class Law
 		/*
 		 * Provide the URL for this section.
 		 */
-		$sql = 'SELECT url, token FROM permalinks
+		$sql = 'SELECT url, token
+				FROM permalinks
 				WHERE relational_id = :id
 				AND object_type = :object_type';
 		$statement = $db->prepare($sql);
@@ -624,12 +623,11 @@ class Law
 		$i=0;
 		foreach ($results as $document)
 		{
+			$law = new Law();
+			$law->law_id = $document->id;
+			$law->get_law();
 
-			$related->{$i}->id = $document->id;
-			$related->{$i}->catch_line = $document->catch_line;
-			$related->{$i}->section_number = $document->section;
-			$related->{$i}->text = $document->text;
-			$related->{$i}->url = $this->get_url($document->section);
+			$related->{$i} = $law;
 			$i++;
 
 		}
@@ -667,10 +665,10 @@ class Law
 		$sql = 'SELECT url
 				FROM permalinks
 				WHERE object_type="law"
-				AND identifier = :identifier';
+				AND token = :token';
 
 		$sql_args = array(
-			':identifier' => $section_number
+			':token' => $section_number
 		);
 
 		$statement = $db->prepare($sql);
@@ -993,7 +991,7 @@ class Law
 			/*
 			 * Turn every code reference in every paragraph into a link.
 			 */
-			$section->text = preg_replace_callback(SECTION_PCRE, array($autolinker, 'replace_sections'), $section->text);
+			$section->text = preg_replace_callback(SECTION_REGEX, array($autolinker, 'replace_sections'), $section->text);
 
 			/*
 			 * Turn every pair of newlines into carriage returns.

@@ -7,8 +7,6 @@
  *
  * PHP version 5
  *
- * @author		Bill Hunt <bill at krues8dr dot com>
- * @copyright	2013 Bill Hunt
  * @license		http://www.gnu.org/licenses/gpl.html GPL 3
  * @version		0.8
  * @link		http://www.statedecoded.com/
@@ -30,7 +28,10 @@ class PermalinkController extends BaseController
 			/*
 			 * Look up the route in the database
 			 */
-			$sql = 'SELECT * FROM permalinks WHERE url = :url LIMIT 1';
+			$sql = 'SELECT *
+					FROM permalinks
+					WHERE url = :url
+					LIMIT 1';
 			$sql_args = array(
 				':url' => $args['route']
 			);
@@ -40,7 +41,7 @@ class PermalinkController extends BaseController
 			/*
 			 * If we found a route
 			 */
-			if ( $result !== FALSE && $statement->rowCount() > 0 )
+			if ( ($result !== FALSE) && ($statement->rowCount() > 0) )
 			{
 
 				$route = $statement->fetch(PDO::FETCH_ASSOC);

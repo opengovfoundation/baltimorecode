@@ -5,10 +5,8 @@
  *
  * PHP version 5
  *
- * @author		Waldo Jaquith <waldo at jaquith.org>
- * @copyright	2010-2013 Waldo Jaquith
  * @license		http://www.gnu.org/licenses/gpl.html GPL 3
- * @version		0.7
+ * @version		0.8
  * @link		http://www.statedecoded.com/
  * @since		0.1
 */
@@ -140,7 +138,7 @@ else
 	/*
 	* Make the "up" link a link to the home page.
 	*/
-	$content->set('link_rel', '<link rel="up" title="Up" href="/" />');
+	$content->set('link_rel', '<link rel="up" title="Up" href="/browse/" />');
 
 }
 
