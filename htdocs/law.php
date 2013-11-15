@@ -105,11 +105,14 @@ if (is_object($law->dublin_core))
 $content->set('breadcrumbs', '');
 foreach (array_reverse((array) $law->ancestry) as $ancestor)
 {
-	$content->append('breadcrumbs', '<li><a href="'.$ancestor->url.'">'.$ancestor->identifier.' '
-		.$ancestor->name.'</a></li>');
+	$content->append('breadcrumbs', '<li><a href="' . $ancestor->url . '">' . $ancestor->identifier
+		. ' ' . $ancestor->name . '</a></li>');
 }
-$content->append('breadcrumbs', '<li class="active"><a href="/'.$law->section_number.'/">§&nbsp;' .
-	 $law->section_number.' '.$law->catch_line.'</a></li>');
+
+$content->append('breadcrumbs', '<li class="active"><a href="/' . $law->section_number
+	. '/">§&nbsp;' . $law->section_number . ' '
+	. ((strlen($law->catch_line) > 50) ? array_shift(explode("\n", wordwrap($law->catch_line, 50)))
+	. ' . . .' : $law->catch_line) . '</a></li>');
 
 $content->prepend('breadcrumbs', '<nav class="breadcrumbs"><ul class="steps-nav">');
 $content->append('breadcrumbs', '</ul></nav>');
@@ -120,9 +123,9 @@ $content->append('breadcrumbs', '</ul></nav>');
 if (isset($law->previous_section))
 {
 	$content->set('prev_next', '<li><a href="' . $law->previous_section->url .
-		'" class="prev" title="Previous section"><span>&larr; Previous</span>' .
-		$law->previous_section->section_number . ' ' .
-		$law->previous_section->catch_line . '</a></li>');
+		'" class="prev" title="Previous section"><span>← Previous</span>' .
+		$law->previous_section->section_number . ' ' . $law->previous_section->catch_line
+		. '</a></li>');
 	$content->append('link_rel', '<link rel="prev" title="Previous" href="' .
 		$law->previous_section->url . '" />');
 }
@@ -137,7 +140,7 @@ else
 if (isset($law->next_section))
 {
 	$content->append('prev_next', '<li><a href="' . $law->next_section->url .
-		'" class="next" title="Next section"><span>Next &rarr;</span>' .
+		'" class="next" title="Next section"><span>Next →</span>' .
 		$law->next_section->section_number . ' ' .
 		$law->next_section->catch_line . '</a></li>');
 	$content->append('link_rel', '<link rel="next" title="Next" href="' . $law->next_section->url . '" />');
@@ -210,7 +213,7 @@ $body .= '</article>';
 /*
  * Display links to representational variants of the text of this law.
  */
-$formats[] = array('doc' => 'Word doc', 'epub' => 'ePub', 'json' => 'JSON', 'pdf' => 'PDF',
+$formats = array('doc' => 'Word doc', 'epub' => 'ePub', 'json' => 'JSON', 'pdf' => 'PDF',
 	'rtf' => 'Rich Text Format', 'txt' => 'Plain Text');
 $body .= '<section id="rep_variant">
 			<h2>Download</h2>
@@ -241,50 +244,6 @@ $sidebar = '
 	<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-518a87af289b1ef3"></script>
 	<!-- AddThis Button END -->
 </section>';
-
-/*
- * Only show the history if the law has a list of amendment years.
- */
-if ( isset($law->amendment_years) )
-{
-	$sidebar .= '
-			<section id="history-description">
-				<h1>History</h1>
-				<p>
-					This law was first passed in ' . reset($law->amendment_years) . '.';
-	if (count((array) $law->amendment_years) > 1)
-	{
-		$sidebar .= ' It was updated in ';
-
-		/*
-		 * Iterate through every year in which this bill has been amended and list them.
-		 */
-		foreach ($law->amendment_years as $year)
-		{
-			if ($year == reset($law->amendment_years))
-			{
-				continue;
-			}
-			if ( ($year == end($law->amendment_years)) && (count((array)$law->amendment_years) > 2) )
-			{
-				$sidebar .= 'and ';
-			}
-			$sidebar .= $year;
-			if ($year != end($law->amendment_years))
-			{
-				$sidebar .= ', ';
-			}
-		}
-		$sidebar .= '.';
-	}
-	else
-	{
-		$sidebar .= ' It has not been changed since.';
-	}
-	$sidebar .= '
-					</p>
-				</section>';
-}
 
 /*
  * Commenting functionality.
@@ -348,17 +307,56 @@ $sidebar .= '<p class="keyboard"><a id="keyhelp">' . $help->get_text('keyboard')
  */
 if ( isset($law->court_decisions) && ($law->court_decisions != FALSE) )
 {
+	
 	$sidebar .= '<section class="grid-box grid-sizer" id="court-decisions">
 				<h1>Court Decisions</h1>
 				<ul>';
+				
 	foreach ($law->court_decisions as $decision)
 	{
+		
 		$sidebar .= '<li><a href="' . $decision->url . '"><em>' . $decision->name . '</em></a> ('
-			. $decision->type_html . ', ' . date('m/d/y', strtotime($decision->date)) . ')<br />'
-			. $decision->abstract . '</li>';
+			. $decision->court_html . ', ' . date('m/d/y', strtotime($decision->date)) . ')';
+		if (isset($decision->abstract))
+		{
+			$sidebar .= '<br />' . $decision->abstract;
+		}
+		$sidebar .= '</li>';
+		
 	}
+	
 	$sidebar .= '</ul>
 			</section>';
+			
+}
+
+
+/*
+ * If any legislation has attempted to amend this law, list it.
+ */
+if ( isset($law->amendment_attempts) && ($law->amendment_attempts != FALSE) )
+{
+	
+	$sidebar .= '<section class="grid-box grid-sizer" id="amendment-attempts">
+				<h1>Amendment Attempts</h1>
+				<ul>';
+				
+	foreach ($law->amendment_attempts as $bill)
+	{
+	
+		$sidebar .= '<li><a href="' . $bill->url . '">' . $bill->number . '</a>: '
+			. $bill->catch_line;
+		if (!empty($bill->outcome))
+		{
+			$sidebar .= ' (' . $bill->outcome . ')';
+		}
+		$sidebar .= '</li>';
+		
+	}
+	
+	$sidebar .= '</ul>
+			</section>';
+			
 }
 
 /*

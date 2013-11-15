@@ -1244,7 +1244,7 @@ class ParserController
 					/*
 					 * Pass the requested section number to Law.
 					 */
-					$laws->section_number = $section->section_number;
+					$laws->law_id = $section->id;
 					$laws->edition_id = $this->edition_id;
 
 					unset($law, $section);
@@ -1333,22 +1333,22 @@ class ParserController
 							 */
 							$xml = new SimpleXMLElement('<law />');
 							object_to_xml($law, $xml);
-							$dom = dom_import_simplexml($xml)->ownerDocument;
+
 							$xml = $xml->asXML();
 
 							/*
 							 * Load the XML string into DOMDocument.
 							 */
-							$dom = new DOMDocument($xml);
+							$dom = new DOMDocument();
 							$dom->loadXML($xml);
 
 							/*
 							 * Simplify every reference, stripping them down to the cited sections.
 							 */
-							$referred_to_by = $dom->getElementsByTagName('referred_to_by')->item(0);
+							$referred_to_by = $dom->getElementsByTagName('referred_to_by');
 							if ( !empty($referred_to_by) && ($referred_to_by->length > 0) )
 							{
-
+								$referred_to_by = $referred_to_by->item(0);
 								$references = $referred_to_by->getElementsByTagName('unit');
 
 								/*
@@ -1383,9 +1383,10 @@ class ParserController
 							/*
 							 * Simplify and reorganize every structural unit.
 							 */
-							$structure = $dom->getElementsByTagName('structure')->item(0);
+							$structure = $dom->getElementsByTagName('structure');
 							if ( !empty($structure) && ($structure->length > 0) )
 							{
+								$structure = $structure->item(0);
 
 								$structural_units = $structure->getElementsByTagName('unit');
 
@@ -1435,10 +1436,10 @@ class ParserController
 							/*
 							 * Rename text units as text sections.
 							 */
-							$text = $dom->getElementsByTagName('text')->item(0);
+							$text = $dom->getElementsByTagName('text');
 							if (!empty($text) && ($text->length > 0))
 							{
-
+								$text = $text->item(0);
 								$text_units = $text->getElementsByTagName('unit');
 
 								/*
@@ -2017,94 +2018,31 @@ class ParserController
 			 * Post each of the files to Solr, in batches of 10,000.
 			 */
 			$file_count = count($files);
-			$batch_size = 1;
+			$batch_size = 10000;
 			for ($i = 0; $i < $file_count; $i+=$batch_size)
 			{
 
 				$file_slice = array_slice($files, $i, $batch_size);
 
 				/*
-				 * Instruct Solr to return its response as JSON, and to apply the specified XSL
+				 * Instruct Solr to apply the specified XSL
 				 * transformation on the provided XML files.
 				 */
 				$solr_parameters = array(
-					'wt' => 'json',
-					'tr' => 'stateDecodedXml.xsl',
-					'commit' => 'true');
+					'tr' => 'stateDecodedXml.xsl');
 
-				$numFiles = 0;
-				$url = $solr_update_url . '?' . http_build_query($solr_parameters);
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL, $url);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-				curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form; charset=US-ASCII') );
-				$params = array();
+
+				$fields = array();
 				foreach ($file_slice as $key=>$filename)
 				{
-					$params[$filename] = '@' . realpath($filename) . ';type=application/xml';
+					$fields[$filename] = '@' . realpath($filename) . ';type=application/xml';
 					++$numFiles;
 				}
-				curl_setopt($ch, CURLOPT_POST, TRUE);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 
-				/*
-				 * Post this request to Solr via cURL, and save the response, which is provided as JSON.
-				 */
-				$response_json = curl_exec($ch);
-
-				/*
-				 * If cURL returned an error.
-				 */
-				if (curl_errno($ch) > 0)
+				if ( !$this->handle_solr_request($fields, true, $solr_parameters) )
 				{
-					$this->logger->message('The attempt to post files to Solr via cURL returned an '
-						. 'error code, ' . curl_errno($ch) . ', from cURL. Could not index laws.', 10);
 					return FALSE;
 				}
-
-				if ( (FALSE === $response_json) || !is_string($response_json) )
-				{
-					$this->logger->message('Could not connect to Solr.', 10);
-					return FALSE;
-				}
-
-				$response = json_decode($response_json);
-
-				if ( ($response === FALSE) || empty($response) )
-				{
-					$this->logger->message('Solr returned invalid JSON.', 8);
-					return FALSE;
-				}
-
-				if (isset($response->error))
-				{
-					var_dump($file_slice);
-					var_dump($response->error);
-					$this->logger->message('Solr error: ',  8);
-					return FALSE;
-				}
-
-			} // end for() loop
-
-			/*
-			 * Files aren't searchable until Solr is told to commit them.
-			 */
-			$commit_url = $solr_update_url . '?commit=true';
-
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $commit_url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-			$results = curl_exec($ch);
-
-			/*
-			 * If cURL returned an error.
-			 */
-			if (curl_errno($ch) > 0)
-			{
-				$this->logger->message('The attempt to commit files to Solr via cURL returned an '
-					. 'error code, ' . curl_errno($ch) . ', from cURL. Could not index laws.', 10);
-				return FALSE;
 			}
 
 			$this->logger->message('Laws indexed with Solr successfully.', 7);
@@ -2113,6 +2051,94 @@ class ParserController
 
 		}
 
+	}
+
+	function clear_index()
+	{
+		$request = '<delete><query>*:*</query></delete>';
+		if ( !$this->handle_solr_request($request) )
+		{
+			return FALSE;
+		}
+
+		$request = '<optimize />';
+		if ( !$this->handle_solr_request($request) )
+		{
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+
+	function handle_solr_request($fields = array(), $multipart = false, $parameters = array())
+	{
+
+		$solr_update_url = SOLR_URL . 'update';
+
+		/*
+		 * Instruct Solr to return its response as JSON, and commit the change.
+		 */
+
+		$solr_parameters = array_merge($parameters, array(
+				'wt' => 'json',
+				'commit' => 'true'
+				)
+			);
+
+		$url = $solr_update_url . '?' . http_build_query($solr_parameters);
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+		if($multipart)
+		{
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form; charset=US-ASCII') );
+		}
+		else
+		{
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml; charset=US-ASCII') );
+		}
+
+		curl_setopt($ch, CURLOPT_POST, TRUE);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+
+		/*
+		 * Post this request to Solr via cURL, and save the response, which is provided as JSON.
+		 */
+		$response_json = curl_exec($ch);
+
+		/*
+		 * If cURL returned an error.
+		 */
+		if (curl_errno($ch) > 0)
+		{
+			$this->logger->message('The attempt to post files to Solr via cURL returned an '
+				. 'error code, ' . curl_errno($ch) . ', from cURL. Could not index laws.', 10);
+			return FALSE;
+		}
+
+		if ( (FALSE === $response_json) || !is_string($response_json) )
+		{
+			$this->logger->message('Could not connect to Solr.', 10);
+			return FALSE;
+		}
+
+		$response = json_decode($response_json);
+
+		if ( ($response === FALSE) || empty($response) )
+		{
+			$this->logger->message('Solr returned invalid JSON.', 8);
+			return FALSE;
+		}
+
+		if (isset($response->error))
+		{
+			var_dump($response->error);
+			$this->logger->message('Solr error: ',  8);
+			return FALSE;
+		}
+
+		return TRUE;
 	}
 
 }
