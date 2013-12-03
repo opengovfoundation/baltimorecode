@@ -34,10 +34,7 @@ define('PLACE_NAME', 'Baltimore');
  */
 define('LAWS_NAME', 'Baltimore City Code');
 
-/*
- * Define the data dir.
- */
-define('DATA_DIRECTORY', WEB_ROOT . '/admin/data/');
+define('SITE_IDENTIFIER', 'city-code');
 
 /*
  * What is the prefix that indicates a section? In many states, this is §, but in others it might be
@@ -54,6 +51,11 @@ define('WEB_ROOT', $_SERVER['DOCUMENT_ROOT']);
  * Define the location of the files to import.
  */
 define('IMPORT_DATA_DIR', WEB_ROOT . '/admin/data/');
+
+/*
+ * Define the data dir.
+ */
+define('DATA_DIRECTORY', IMPORT_DATA_DIR);
 
 /*
  * What's is the base url?
