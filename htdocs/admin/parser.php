@@ -9,7 +9,8 @@
 	 */
 	function autoload_decoder($classname){
 		$path = str_replace('\\', '/', $classname);
-		$path = dirname(__DIR__) . '/xml/' . $path . '.php';
+		$path = __DIR__ . '/' . $path . '.php';
+		var_dump($path);
 		if(is_file($path)){
 			require_once($path);
 		}
@@ -28,7 +29,7 @@
 	 */
 	try{
 		//Grab files
-		foreach(glob('../original/Art*.xml') as $filename){
+		foreach(glob('./original/Art*.xml') as $filename){
 
 			$src = file_get_contents($filename);
 
@@ -203,7 +204,7 @@
 						//$tempSection->parseChildren();
 
 						$tempSection->toXML();
-						$tempSection->saveXML('Art' . $article_index . '-' . str_replace(' ', '-', $identifier[1]) . '.xml');
+						$tempSection->saveXML('./data/' . 'Art' . $article_index . '-' . str_replace(' ', '-', $identifier[1]) . '.xml');
 
 						// Add any parts we'd stored earlier.
 						if($temp_part)
