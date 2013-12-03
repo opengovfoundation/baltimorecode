@@ -35,7 +35,7 @@
 			</a>
 			<section id="search">
 				<form id="search_form" method="get" action="/search/">
-					<label for="search">Search the code by keyword, phrase, or title</label>
+					<label for="search">Search the {{laws_name}} by keyword, phrase, or title</label>
 					<input type="search" name="q" value="" id="search" placeholder="Search the Laws">
 					<input type="submit" name="" value="Search" id="submit" class="btn btn-success">
 					<!--a class="advanced" href="#">Advanced</a-->
@@ -46,10 +46,10 @@
 			<div class="nest">
 				<ul>
 					<li>
-						<a href="http://{{base_site_domain}}/browse/" id="browse">City Code</a>
+						<a href="http://{{base_site_domain}}/browse/" id="browse" class="city-code">City Code</a>
 					</li>
 					<li>
-						<a href="http://charter.{{base_site_domain}}/browse/" id="browse">City Charter</a>
+						<a href="http://charter.{{base_site_domain}}/browse/" id="browse" class="city-charter">City Charter</a>
 					</li>
 
 					<li>
