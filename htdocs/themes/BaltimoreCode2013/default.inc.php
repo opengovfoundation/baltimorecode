@@ -46,8 +46,12 @@
 			<div class="nest">
 				<ul>
 					<li>
-						<a href="/browse/" id="browse">Browse</a>
+						<a href="http://{{base_site_domain}}/browse/" id="browse">City Code</a>
 					</li>
+					<li>
+						<a href="http://charter.{{base_site_domain}}/browse/" id="browse">City Charter</a>
+					</li>
+
 					<li>
 						<a href="/about/" id="about">About Us</a>
 					</li>
