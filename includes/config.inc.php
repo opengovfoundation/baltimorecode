@@ -32,9 +32,9 @@ define('PLACE_NAME', 'Baltimore');
 /*
  * What does this place call its laws?
  */
-define('LAWS_NAME', 'Baltimore City Code');
+define('LAWS_NAME', 'Baltimore City Charter');
 
-define('SITE_IDENTIFIER', 'city-code');
+define('SITE_IDENTIFIER', 'city-charter');
 
 /*
  * What is the prefix that indicates a section? In many states, this is §, but in others it might be
