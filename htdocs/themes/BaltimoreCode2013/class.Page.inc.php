@@ -156,6 +156,9 @@ class BaltimoreCode2013__Page extends Page
 
 		$content->append('base_site_domain', BASE_SITE_DOMAIN);
 		$content->append('home_site_url', HOME_SITE_URL);
+		$content->append('laws_name', LAWS_NAME);
+
+		$content->append('body_class', ' ' . SITE_IDENTIFIER);
 
 		/*
 		 * Setup assets
