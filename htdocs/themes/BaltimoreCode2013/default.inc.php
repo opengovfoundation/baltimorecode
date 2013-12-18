@@ -46,14 +46,14 @@
 			<div class="nest">
 				<ul>
 					<li>
-						<a href="http://{{base_site_domain}}/browse/" id="browse" class="city-code">City Code</a>
+						<a href="http://{{base_site_domain}}/browse/" id="browse" class="city-code">City&nbsp;Code</a>
 					</li>
 					<li>
-						<a href="http://charter.{{base_site_domain}}/browse/" id="browse" class="city-charter">City Charter</a>
+						<a href="http://charter.{{base_site_domain}}/browse/" id="browse" class="city-charter">City&nbsp;Charter</a>
 					</li>
 
 					<li>
-						<a href="/about/" id="about">About Us</a>
+						<a href="/about/" id="about">About&nbsp;Us</a>
 					</li>
 					<li>
 						<a href="/downloads/" id="downloads">Downloads</a>
