@@ -2018,7 +2018,7 @@ class ParserController
 			 * Post each of the files to Solr, in batches of 10,000.
 			 */
 			$file_count = count($files);
-			$batch_size = 10000;
+			$batch_size = 1;
 			for ($i = 0; $i < $file_count; $i+=$batch_size)
 			{
 
@@ -2139,6 +2139,28 @@ class ParserController
 		}
 
 		return TRUE;
+	}
+
+	public function export_titles()
+	{
+		$parser = new Parser(
+			array(
+				/*
+				 * Tell the parser what the working directory
+				 * should be for the XML files.
+				 */
+
+				'directory' => WEB_ROOT . '/admin/data/',
+
+				/*
+				 * Set the database
+				 */
+
+				'db' => $this->db
+			)
+		);
+
+		$parser->export_titles();
 	}
 
 }

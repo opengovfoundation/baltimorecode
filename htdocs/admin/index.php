@@ -153,6 +153,16 @@ elseif ($_POST['action'] == 'parse')
 
 }
 
+elseif ($_POST['action'] == 'export_titles')
+{
+
+	$body = 'Begin parsing.  ';
+
+	$parser->export_titles();
+
+	$body .= 'Done';
+}
+
 elseif ($_POST['action'] == 'permalinks')
 {
 
@@ -387,6 +397,14 @@ function show_admin_forms($args = array())
 			<label for="make_current">Make this edition current.</label>
 		</div>
 		<input type="submit" value="Import" />
+	</form>
+
+
+	<form method="post" action="/admin/parser.php">
+		<h3>Export Titles</h3>
+		<p>Store titles for later use.</p>
+		<input type="hidden" name="action" value="export_titles" />
+		<input type="submit" value="Export Titles" />
 	</form>
 
 	<form method="post" action="/admin/?page=parse&noframe=1">
