@@ -9,7 +9,11 @@ RewriteBase /
 # request.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)\.txt$ /$1/?plain_text=y [PT]
+RewriteRule ^(.*)\.txt$ /$1?plain_text=y [PT]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)\.json$ /downloads/current/code-json/$1.json [PT]
 
 # Requests for the terms page.
 RewriteRule ^terms/$ /terms.php [QSA]
