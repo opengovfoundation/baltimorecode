@@ -15,6 +15,10 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)\.json$ /downloads/current/code-json/$1.json [PT]
 
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)\.xml$ /downloads/current/code-xml/$1.xml [PT]
+
 # Requests for the terms page.
 RewriteRule ^terms/$ /terms.php [QSA]
 
