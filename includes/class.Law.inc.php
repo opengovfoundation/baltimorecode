@@ -361,7 +361,7 @@ class Law
 		 */
 		if ($this->config->get_court_decisions == TRUE)
 		{
-		
+
 			/*
 			 * If we already have this data cached as metadata.
 			 */
@@ -369,7 +369,7 @@ class Law
 			{
 				$this->court_decisions = unserialize($this->metadata->court_decisions);
 			}
-			
+
 			/*
 			 * If we do not have this data cached.
 			 */
@@ -462,9 +462,9 @@ class Law
 		/*
 		 * List the URLs for the textual formats in which this section is available.
 		 */
-		$this->formats->txt = substr($this->url, 0, -1) . '.txt';
-		$this->formats->json = substr($this->url, 0, -1) . '.json';
-		$this->formats->json = substr($this->url, 0, -1) . '.xml';
+		$this->formats->txt  = $this->url . '.txt';
+		$this->formats->json = $this->url . '.json';
+		$this->formats->json = $this->url . '.xml';
 
 		/*
 		 * Create metadata in the Dublin Core format.
@@ -848,11 +848,11 @@ class Law
 			$rotated->{stripslashes($field->meta_key)} = $field->meta_value;
 
 		}
-		
+
 		return $rotated;
-		
+
 	}
-	
+
 	/*
 	 * Store a single piece of metadata for a single law
 	 *
@@ -871,24 +871,24 @@ class Law
 	 */
 	function store_metadata()
 	{
-		
+
 		/*
 		 * We're going to need access to the database connection throughout this class.
 		 */
 		global $db;
-		
+
 		if ( !isset($this->section_id) || !is_object($this->metadata) )
 		{
 			return FALSE;
 		}
-		
+
 		$sql = 'INSERT INTO laws_meta
 				SET law_id = :law_id,
 				meta_key = :meta_key,
 				meta_value = :meta_value,
 				date_created = now()';
 		$statement = $db->prepare($sql);
-		
+
 		foreach ($this->metadata as $field)
 		{
 			$sql_args = array(
@@ -902,11 +902,11 @@ class Law
 			{
 				return FALSE;
 			}
-			
+
 		}
-		
+
 		return TRUE;
-		
+
 	}
 
 
