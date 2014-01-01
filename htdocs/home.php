@@ -44,7 +44,8 @@ $content->set('body',
 					<h2>The laws of ' . PLACE_NAME . ', for non-lawyers.</h2>
 				</hgroup>
 
-				<p>' . SITE_TITLE . ' provides the ' . LAWS_NAME . ' on one friendly website. Inline
+				<p>' . SITE_TITLE . ' provides the Baltimore City Code, City Charter, and
+				Public Local Laws (Article 4 of the Maryland Code) on one friendly website. Inline
 				definitions, cross-references, bulk downloads, a modern API, and all of the niceties
 				of modern website design. It’s like the expensive software lawyers use, but free and
 				wonderful.</p>
