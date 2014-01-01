@@ -27,7 +27,7 @@
   <div id="container"><!-- Hack for footer lock -->
 	<header id="page_header">
 		<div class="nest">
-			<a href="/" class="noprint">
+			<a href="http://{{base_site_domain}}/" class="noprint">
 				<hgroup id="place_logo">
 					<h1>{{place_name}}</h1>
 					<h2>Decoded</h2>
