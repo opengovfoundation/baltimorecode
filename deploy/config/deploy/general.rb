@@ -2,7 +2,8 @@
 namespace :world do
   apps = [
     'www',
-    'charter'
+    'charter',
+    'pll'
   ]
 
   task :deploy do
