@@ -45,7 +45,7 @@ $content->set('body',
 				</hgroup>
 
 				<p>' . SITE_TITLE . ' provides the Baltimore City Code, City Charter, and
-				Public Local Laws (Article 4 of the Maryland Code) on one friendly website. Inline
+				Public Local Laws on one friendly website. Inline
 				definitions, cross-references, bulk downloads, a modern API, and all of the niceties
 				of modern website design. It’s like the expensive software lawyers use, but free and
 				wonderful.</p>
