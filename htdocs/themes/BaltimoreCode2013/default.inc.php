@@ -49,9 +49,11 @@
 						<a href="http://{{base_site_domain}}/browse/" id="browse" class="city-code">City&nbsp;Code</a>
 					</li>
 					<li>
-						<a href="http://charter.{{base_site_domain}}/browse/" id="browse" class="city-charter">City&nbsp;Charter</a>
+						<a href="http://charter.{{base_site_domain}}/browse/" id="browse" class="city-charter">City Charter</a>
 					</li>
-
+					<li>
+						<a href="http://pll.{{base_site_domain}}/browse/" id="browse" class="pll">Public Local<br>Laws</a>
+					</li>
 					<li>
 						<a href="/about/" id="about">About&nbsp;Us</a>
 					</li>
