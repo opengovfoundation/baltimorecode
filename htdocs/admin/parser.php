@@ -29,7 +29,7 @@
 	 */
 	try{
 		//Grab files
-		foreach(glob('./original/Art*.xml') as $filename){
+		foreach(glob('./original.20131212/02 - PLL.xml') as $filename){
 
 			$src = file_get_contents($filename);
 
@@ -185,13 +185,13 @@
 							$lines[1] = 'No Content';
 						}
 
-						$tempSection->addParent(1, 'Article', $article_index, $article_title);
+						//$tempSection->addParent(1, 'Article', $article_index, $article_title);
 
-						$tempSection->addParent(2, 'Subtitle', $subtitle_index, $subtitle_title);
+						$tempSection->addParent(1, 'Subtitle', $subtitle_index, $subtitle_title);
 
 						if($part)
 						{
-							$tempSection->addParent(3, 'Part', $part['index'], $part['title']);
+							$tempSection->addParent(2, 'Part', $part['index'], $part['title']);
 						}
 
 						$tempSection->setIdentifier($identifier[1]);
