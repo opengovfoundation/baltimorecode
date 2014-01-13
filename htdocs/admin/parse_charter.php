@@ -20,6 +20,81 @@
 		 file_put_contents('error.log', "\n------------------\n" . print_r($msg, true) . "\n------------------\n", FILE_APPEND);
 	}
 
+	/*
+	 * Convert from Roman numerals to standard numerals.
+	 * This is incomplete at best.
+	 */
+	function fromRoman($roman)
+	{
+		$romans = array(
+			'M' => 1000,
+			'CM' => 900,
+			'D' => 500,
+			'CD' => 400,
+			'C' => 100,
+			'XC' => 90,
+			'L' => 50,
+			'XL' => 40,
+			'X' => 10,
+			'IX' => 9,
+			'V' => 5,
+			'IV' => 4,
+			'I' => 1,
+		);
+
+		$result = 0;
+
+		foreach ($romans as $key => $value) {
+			while (strpos($roman, $key) === 0) {
+				$result += $value;
+				$roman = substr($roman, strlen($key));
+			}
+		}
+
+		return $result;
+	}
+
+	/*
+	 * Convert other letters to numbers.
+	 * We can't use ord() because it's not utf-8 friendly.
+	 */
+	function fromAlpha($letter)
+	{
+		var_dump($letter);
+
+		$alphabet = array_flip(array(
+			'A', 'B', 'C', 'D', 'E', 'F', 'G',
+			'H', 'I', 'J', 'K', 'L', 'M', 'N',
+			'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+			'V', 'W', 'X', 'Y', 'Z'
+		));
+
+		$letter = strtoupper($letter);
+
+		return ((int) $alphabet[$letter]) + 1;
+	}
+
+	function idToOrder($number)
+	{
+		$parts = explode('-', $number);
+
+		$total = fromRoman($parts[0]);
+
+		if(count($parts) > 1)
+		{
+			if(preg_match('/([A-Z])$/', $parts[1], $matches))
+			{
+				$total += fromAlpha($matches[1]) / 10000;
+
+				$parts[1] = substr($parts[1], 0, -1);
+			}
+
+			$total += ((int) $parts[1]) / 1000;
+		}
+
+		return $total;
+	}
+
 	$structure = array('@\n\s*(\([a-z]+\))\s.*@', '@\n\s*(\(\d+\)).*@', '@\n\s*(\([ixv]+\)).*@', '@\n\s*(\d+)\..*@');
 	$lawTopPattern = '@^\s*\(?(\d+(?:\.\d)?[A-Z]?)\.?\)?\s(.*)@';
 
@@ -58,7 +133,8 @@
 				$unit = $structureNode->addChild("unit", $titleStuff[2]);
 				$unit->addAttribute("label", "article");
 				$unit->addAttribute("identifier", $titleStuff[1]);
-				$unit->addAttribute("order_by", $index);
+				$unit->addAttribute("order_by", idToOrder($titleStuff[1]));
+
 				$unit->addAttribute("level", '1');
 
 				$lawInfo = $lawMetas[1][$lawIndex -1];
@@ -73,7 +149,7 @@
 						$repealedText = $repealedLaws[3][0];
 						$filename = './xml/' . $art_num . '-' . $repealedNum . '.xml';
 						$catch_title = $law->addChild('catch_line', $repealedText);
-						$order_by = $law->addChild('order_by', $repealedNum);
+						$order_by = $law->addChild('order_by', idToOrder($art_num . '-' . $repealedNum));
 						$section_number = $law->addChild('section_number', $art_num . '-' . $repealedNum);
 						$text = $law->addChild('text', $repealedText);
 						$metadata = $law->addChild('metadata');
@@ -85,7 +161,7 @@
 							$repealedNum = $i;
 							$filename = './xml/' . $art_num . '-' . $repealedNum . '.xml';
 							$catch_title = $law->addChild('catch_line', $repealedText);
-							$order_by = $law->addChild('order_by', $repealedNum);
+							$order_by = $law->addChild('order_by', idToOrder($art_num . '-' . $repealedNum));
 							$section_number = $law->addChild('section_number', $art_num . '-' . $repealedNum);
 							$text = $law->addChild('text', $repealedText);
 							$metadata = $law->addChild('metadata');
@@ -111,7 +187,7 @@
 
 					$filename = './xml/' . $art_num . '-' . $lawInfo[1][0] . '.xml';
 					$catch_title = $law->addChild('catch_line', trim($lawInfo[2][0]));
-					$order_by = $law->addChild('order_by', $lawInfo[1][0]);
+					$order_by = $law->addChild('order_by', idToOrder($art_num . '-' . $lawInfo[1][0]));
 					$section_number = $law->addChild('section_number', $art_num . '-' . $lawInfo[1][0]);
 					$text = $law->addChild('text');
 					$section = $text->addChild('section', $lawString);
