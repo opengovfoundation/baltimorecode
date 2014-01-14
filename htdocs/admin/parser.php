@@ -10,7 +10,7 @@
 	function autoload_decoder($classname){
 		$path = str_replace('\\', '/', $classname);
 		$path = __DIR__ . '/' . $path . '.php';
-		var_dump($path);
+
 		if(is_file($path)){
 			require_once($path);
 		}
@@ -30,6 +30,7 @@
 	try{
 		//Grab files
 		foreach(glob('./original/Art*.xml') as $filename){
+			print "Parsing $filename\n";
 
 			$src = file_get_contents($filename);
 
@@ -49,10 +50,11 @@
 			}
 
 			//strip useless XML tags
-			$text = strip_tags($src);
+			$text = strip_tags($src, '<para>');
+			$text = str_replace('<para></para>', '', $text);
 
 			//Split content on 'Subtitle 1'
-			$subtitles = preg_split("@^(Subtitle\s1\s*)$@m", $text);
+			$subtitles = preg_split("@^<para>\s*(Subtitle\s1\s*)(?:</para>)?$@m", $text);
 
 			if(!isset($subtitles[2])){
 				throw new Exception("Couldn't get body of text for $filename in article: $article_index");
@@ -62,7 +64,7 @@
 			$subtitles = $subtitles[2];
 
 			//Split the remaining content into Subtitles
-			$subtitles = preg_split('@^(Subtitles?\s[0-9A]+\s?[to]*\s?[0-9A]*)\s*$@m', $subtitles, -1, PREG_SPLIT_DELIM_CAPTURE);
+			$subtitles = preg_split('@^<para>(Subtitles?\s[0-9A]+\s?[to]*\s?[0-9A]*)\s*(?:</para>)?$@m', $subtitles, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 			//Loop through the subtitles
 			foreach($subtitles as $index => $content){
@@ -73,7 +75,9 @@
 					$ret = preg_match_all('@Subtitles?\s([0-9A]+)\s?[to]*\s?([0-9A]*)@', $content, $matches);
 
 					if($ret === 0 || $ret === false){
-						throw new Exception("Subtitle index not found.\n Index: $index\nContent: $content\n");
+						throw new Exception("Subtitle index not found.\n".
+							"Index: $index\n" .
+							"Content: " . substr($content, 0, 78) . "\n");
 					}
 					$subtitle_index = $matches[1][0];
 				}
@@ -88,7 +92,7 @@
 					$subtitle_content = $content;
 
 					//Split the subtitle content on the Section identifiers
-					$sections = preg_split('@\n(&#167;)+@', $subtitle_content);
+					$sections = preg_split('@\n<para>(&#167;)+@', $subtitle_content);
 					if($article_index == '01'){
 						customLog($sections);
 					}
@@ -103,13 +107,23 @@
 						//If the index is zero, we have the Subtitle name
 						if($index == 0){
 							//Part 1 almost always comes right after the section title.
-							if(preg_match("/\n(Part\.? +([0-9]+)\.)  /", $section, $matches))
+							if(preg_match("/\n<para>(Part\.? +([0-9]+)\.)  /", $section, $matches))
 							{
-								list($subtitle_title, $part_name) = preg_split("/\nPart\.? +[0-9]+\.  /", $section);
-								$subtitle_title = trim($subtitle_title);
+								list($subtitle_title, $part_name) = preg_split("/\n<para>Part\.? +[0-9]+\.  /", $section);
+								$subtitle_title = trim(strip_tags($subtitle_title));
+								$part_name = trim(strip_tags($part_name));
 
 
-								list($part_name, $section) = preg_split("/\n+/", $part_name, 2);
+								$parts = preg_split("/\n+/", $part_name, 2);
+								if(count($parts) == 2)
+								{
+									list($part_name, $section) = $parts;
+								}
+								elseif(count($parts) == 1)
+								{
+									$parts_name = $parts[0];
+								}
+								unset($parts);
 
 								$part = array(
 									'index' => $matches[2],
@@ -123,7 +137,7 @@
 
 							}
 							else{
-								$subtitle_title = $section;
+								$subtitle_title = strip_tags($section);
 								continue;
 							}
 
@@ -136,44 +150,90 @@
 						// the *top* or *bottom* of sections.  That's a pretty safe bet,
 						// but keep an eye on this!
 
-						if(preg_match("/\n\nPart\.? +([0-9]+)\. +/", $section, $matches))
+						if(preg_match("/\n\n<para>Part\.? +([0-9]+)\. +/", $section, $matches))
 						{
-							$pieces = preg_split("/\n\n(Part\.? +[0-9]+\. +.*)(?:\n|$)/", $section, -1, PREG_SPLIT_DELIM_CAPTURE);
+							$pieces = preg_split("/\n\n<para>(Part\.? +[0-9]+\. +.*)(?:\n|$)/", $section, -1, PREG_SPLIT_DELIM_CAPTURE);
 							$pieces = array_filter($pieces);
 							$section = '';
 
 							foreach($pieces as $key => $piece)
 							{
 								$piece = trim($piece);
-								if(preg_match('/Part\.? +([0-9]+)\. +(.*)/', $piece, $matches))
+								if(preg_match('/<para>Part\.? +([0-9]+)\. +(.*)/', $piece, $matches))
 								{
 									$temp_part = array(
 										'index' => $matches[1],
-										'title' => $matches[2]
+										'title' => strip_tags($matches[2])
 									);
 								}
 								else
 								{
-									$section .= $piece;
+									$section .= strip_tags($piece);
 								}
 							}
 
 						}
 
 						//Split the first line (Section top-level information)
-						$lines = preg_split('/\r\n|\r|\n/', $section, 2);
+						$lines = preg_split('@</para>@', $section, 2);
 
-						//grab the section catch title
-						$catch_line = preg_replace('@(\d+[A-Z]?-\d+\s?[to]*\s?\d*[A-Z]?-?\d*)\.?@', '', $lines[0]);
+						if(isset($lines[1]))
+						{
+							$lines[1] = strip_tags($lines[1]);
 
-						//grab the section number
-						$ret = preg_match('@(\d+[A-Z]?-?\d*\s?[to]*\s?\d*[A-Z]?-?\d*)\.?@', $lines[0], $identifier);
+							// Grab any editor's notes.
+							if(strlen($lines[1]))
+							{
+								if(strpos($lines[1], 'Editor&#8217;s Note:') === 0)
+								{
+									list($note, $lines[1]) = preg_split('/(\r\n|\r|\n)+/', $lines[1], 2);
+									$lines[0] .= "\n\n" . $note;
+
+									$lines[1] = trim($lines[1]);
+									if(!strlen($lines[1]))
+									{
+										unset($lines[1]);
+									}
+								}
+							}
+							else
+							{
+								unset($lines[1]);
+							}
+						}
+
+						$lines[0] = strip_tags($lines[0]);
+
+						// Article 22 does it's own thing.
+						if($article_index == '22')
+						{
+							//grab the section catch title
+							$catch_line = preg_replace('@\d+( (to|-) \d+)?\.?@', '', $lines[0]);
+
+							//grab the section number
+							$ret = preg_match('@((\d+)( (?:to|-) (\d+))?)\.?@', $lines[0], $identifier);
+
+							$order_by = $identifier[2];
+						}
+						else
+						{
+							//grab the section catch title
+							$catch_line = preg_replace('@(\d+[A-Z]?-\d+\s?(to)\s?\d*[A-Z]?-?\d*)\.?@', '', $lines[0]);
+
+							//grab the section number
+							$ret = preg_match('@(\d+[A-Z]?-?\d*\s?(to)*\s?\d*[A-Z]?-?\d*)\.?@', $lines[0], $identifier);
+
+							$order_by = $identifier[1];
+						}
 
 						if($ret === 0 || $ret === false){
 							throw new Exception("Error getting section number in $filename " .
-								"for line: " . print_r($lines[0], true) . "\n" .
+								"for line: " . print_r($lines[1], true) . "\n" .
 								"****\n" .
-								"Subtitle: $subtitle_content");
+								"Subtitle: " .
+								substr($sections[$index-2], 0, 78) ."\n\n".
+								substr($sections[$index-1], 0, 78) ."\n\n".
+								substr($section, 0, 78));
 						}
 
 						//throw an error if we can't grab the section number
@@ -189,7 +249,7 @@
 
 						$tempSection->addParent(2, 'Subtitle', $subtitle_index, $subtitle_title);
 
-						if($part)
+						if(isset($part))
 						{
 							$tempSection->addParent(3, 'Part', $part['index'], $part['title']);
 						}
@@ -197,6 +257,7 @@
 						$tempSection->setIdentifier($identifier[1]);
 						$tempSection->setContent($lines[1]);
 						$tempSection->setCatchLine($catch_line);
+						$tempSection->setOrderBy($order_by);
 
 						$tempSection->setDebug(true);
 
@@ -207,7 +268,7 @@
 						$tempSection->saveXML('./data/' . 'Art' . $article_index . '-' . str_replace(' ', '-', $identifier[1]) . '.xml');
 
 						// Add any parts we'd stored earlier.
-						if($temp_part)
+						if(isset($temp_part))
 						{
 							$part = $temp_part;
 							unset($temp_part);
