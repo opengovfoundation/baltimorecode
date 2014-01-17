@@ -802,7 +802,7 @@ class Structure
 					LEFT JOIN permalinks ON laws.id = permalinks.relational_id
 						AND permalinks.object_type = :object_type
 					WHERE structure_id = :id
-					ORDER BY order_by, section';
+					ORDER BY ABS(order_by), section';
 			$sql_args = array(
 				':object_type' => 'law',
 				':id' => $this->id
@@ -821,7 +821,7 @@ class Structure
 						AND permalinks.object_type = :object_type
 					WHERE structure_id = :id
 					AND (laws_meta.meta_value = "n" OR laws_meta.meta_value IS NULL)
-					ORDER BY order_by, section';
+					ORDER BY ABS(order_by), section';
 			$sql_args = array(
 				':object_type' => 'law',
 				':id' => $this->id
