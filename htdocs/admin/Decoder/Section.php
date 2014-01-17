@@ -65,7 +65,15 @@
 
 			//Split identifier and pop last element
 			$identifier_parts = explode('-', $this->identifier);
-			$order_by_value = array_pop($identifier_parts);
+
+			if(!$this->order_by)
+			{
+				$order_by_value = array_pop($identifier_parts);
+			}
+			else
+			{
+				$order_by_value = $this->order_by;
+			}
 			$order_by = $law->addChild('order_by', $order_by_value);
 
 			//Add section content

@@ -948,6 +948,10 @@ class Parser
 
 			$structure->identifier = $struct->identifier;
 			$structure->name = $struct->name;
+			if(isset($struct->order_by))
+			{
+				$structure->order_by = $struct->order_by;
+			}
 
 			if(strpos($structure->name, 'Editor&#8217;s Note:') !== FALSE)
 			{
@@ -1434,6 +1438,11 @@ class Parser
 		{
 			$sql .= ', name = :name';
 			$sql_args[':name'] = $this->name;
+		}
+		if (!empty($this->order_by))
+		{
+			$sql .= ', order_by = :order_by';
+			$sql_args[':order_by'] = $this->order_by;
 		}
 		$sql .= ', label = :label, edition_id = :edition_id';
 		$sql .= ', depth = :depth, date_created=now()';
