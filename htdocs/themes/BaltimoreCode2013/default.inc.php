@@ -26,6 +26,9 @@
 	<![endif]-->
   <div id="container"><!-- Hack for footer lock -->
 	<header id="page_header">
+		<div class="banner">
+			This site is out of date and no longer maintained. Please refer to official sources for the up to date legal code.
+		</div>
 		<div class="nest">
 			<a href="http://{{base_site_domain}}/" class="noprint">
 				<hgroup id="place_logo">
@@ -52,7 +55,7 @@
 						<a href="http://charter.{{base_site_domain}}/browse/" id="browse" class="city-charter">City Charter</a>
 					</li>
 					<li>
-						<a href="http://pll.{{base_site_domain}}/browse/" id="browse" class="pll">Public Local<br>Laws</a>
+						<a href="http://pll.{{base_site_domain}}/browse/" id="browse" class="pll">Public Local Laws</a>
 					</li>
 					<li>
 						<a href="/about/" id="about">About&nbsp;Us</a>
